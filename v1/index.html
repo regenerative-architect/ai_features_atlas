@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Exhaustive reference of HTML, CSS, JavaScript, and Web API features that AI can automatically implement into your web pages." />
+  <title>The AI Web Features Atlas — Future-Proof Your Designs</title>
+
+  <!-- Google Fonts: Fraunces (display) + JetBrains Mono (code) + Crimson Pro (body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=JetBrains+Mono:wght@400;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─────────────────────────────────────────────
+       CSS CUSTOM PROPERTIES (Design Tokens)
+       Change these to retheme the entire page.
+       This is itself an example of CSS Feature #1.
+    ───────────────────────────────────────────── */
+    :root {
+      --bg-void:     #060810;
+      --bg-deep:     #0b0f1a;
+      --bg-surface:  #111827;
+      --bg-card:     #141c2e;
+      --bg-card-h:   #1a2540;
+      --accent-1:    #00ffc8;   /* teal glow */
+      --accent-2:    #7b61ff;   /* violet */
+      --accent-3:    #ff6b6b;   /* coral */
+      --accent-4:    #f7c948;   /* gold */
+      --accent-5:    #4ecdc4;   /* seafoam */
+      --text-primary:   #e8edf5;
+      --text-secondary: #8a9bb8;
+      --text-muted:     #4a5568;
+      --border:         rgba(0,255,200,0.12);
+      --glow-sm:   0 0 12px rgba(0,255,200,0.25);
+      --glow-md:   0 0 28px rgba(0,255,200,0.35);
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-body:    'Crimson Pro', Georgia, serif;
+      --font-mono:    'JetBrains Mono', 'Courier New', monospace;
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    /* ── RESET & BASE ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+      /* CSS Scroll Snapping — demonstrated in the hero */
+    }
+
+    body {
+      background: var(--bg-void);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      overflow-x: hidden;
+      /* CSS Backdrop Filter support check happens in JS */
+    }
+
+    /* Custom scrollbar — purely decorative, degrades gracefully */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-void); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-1); border-radius: 3px; opacity: 0.5; }
+
+    /* ── SKIP LINK (Accessibility) ── */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 1rem;
+      background: var(--accent-1);
+      color: var(--bg-void);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-weight: 600;
+      z-index: 9999;
+      transition: top 0.2s;
+    }
+    .skip-link:focus { top: 1rem; }
+
+    /* ── CANVAS BACKGROUND ── */
+    #particle-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none; /* let clicks pass through */
+    }
+
+    /* ── LAYOUT WRAPPER ── */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ══════════════════════════════════════════
+       HERO SECTION
+    ══════════════════════════════════════════ */
+    #hero {
+      min-height: 100svh; /* svh = small viewport height — CSS Units feature */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 6rem 1.5rem 4rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-1);
+      margin-bottom: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s var(--ease-spring) 0.2s forwards;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.8rem, 7vw, 6.5rem); /* CSS clamp() — fluid typography */
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      max-width: 14ch;
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.9s var(--ease-spring) 0.35s forwards;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent-1);
+      /* CSS text-shadow for glow effect */
+      text-shadow: 0 0 40px rgba(0,255,200,0.5), 0 0 80px rgba(0,255,200,0.2);
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-secondary);
+      max-width: 55ch;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 1s var(--ease-spring) 0.5s forwards;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 1s var(--ease-spring) 0.7s forwards;
+    }
+
+    .stat-item { text-align: left; }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--accent-1);
+      line-height: 1;
+    }
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .scroll-cue {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      animation: bounce 2.5s ease-in-out infinite;
+    }
+
+    .scroll-cue svg { opacity: 0.5; }
+
+    /* ══════════════════════════════════════════
+       STICKY TOP BAR / SEARCH
+    ══════════════════════════════════════════ */
+    #topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      /* CSS backdrop-filter: glassmorphism */
+      background: rgba(6, 8, 16, 0.75);
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      border-bottom: 1px solid var(--border);
+      padding: 0.9rem 0;
+    }
+
+    .topbar-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .topbar-logo {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--accent-1);
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    /* ── Search Input ── */
+    #search-input {
+      flex: 1;
+      min-width: 200px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0.55rem 1rem;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    #search-input::placeholder { color: var(--text-muted); }
+    #search-input:focus {
+      border-color: var(--accent-1);
+      box-shadow: var(--glow-sm);
+    }
+
+    /* ── Filter Pills ── */
+    .filter-pills {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .pill:hover { border-color: var(--accent-1); color: var(--accent-1); }
+    .pill.active {
+      background: var(--accent-1);
+      border-color: var(--accent-1);
+      color: var(--bg-void);
+      box-shadow: var(--glow-sm);
+    }
+
+    /* ── Results count ── */
+    #results-count {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    /* ══════════════════════════════════════════
+       MAIN CONTENT GRID
+    ══════════════════════════════════════════ */
+    #main-content {
+      display: grid;
+      /* CSS Grid with named areas — a key feature */
+      grid-template-columns: 240px 1fr;
+      grid-template-areas: "toc cards";
+      gap: 2.5rem;
+      padding: 3rem 0 6rem;
+      align-items: start;
+    }
+
+    /* ── TABLE OF CONTENTS (sticky sidebar) ── */
+    #toc {
+      grid-area: toc;
+      position: sticky;
+      top: 80px;
+      max-height: calc(100vh - 120px);
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    #toc::-webkit-scrollbar { width: 3px; }
+    #toc::-webkit-scrollbar-thumb { background: var(--border); }
+
+    .toc-title {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .toc-list { list-style: none; }
+    .toc-list li { margin-bottom: 0.25rem; }
+
+    .toc-link {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      padding: 0.35rem 0.6rem;
+      border-radius: var(--radius-sm);
+      border-left: 2px solid transparent;
+      transition: all 0.2s;
+    }
+    .toc-link:hover { color: var(--text-primary); border-left-color: var(--accent-1); }
+    .toc-link.active { color: var(--accent-1); border-left-color: var(--accent-1); background: rgba(0,255,200,0.06); }
+
+    .toc-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+
+    /* ── CARDS AREA ── */
+    #cards-area { grid-area: cards; }
+
+    /* ── CATEGORY SECTION ── */
+    .category-section {
+      margin-bottom: 4rem;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .category-icon {
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+
+    .category-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .category-count {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      padding: 0.2rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+    }
+
+    .category-desc {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      max-width: 70ch;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── FEATURE CARDS GRID ── */
+    .cards-grid {
+      display: grid;
+      /* CSS subgrid-like auto-fill with minmax() */
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    /* ── INDIVIDUAL FEATURE CARD ── */
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.4rem;
+      /* CSS @property animation — card enters via Intersection Observer */
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s var(--ease-spring),
+                  border-color 0.3s, box-shadow 0.3s, background 0.3s;
+      cursor: default;
+    }
+    .feature-card.visible { opacity: 1; transform: translateY(0); }
+    .feature-card:hover {
+      background: var(--bg-card-h);
+      border-color: rgba(0,255,200,0.3);
+      box-shadow: var(--glow-sm), 0 8px 32px rgba(0,0,0,0.4);
+      transform: translateY(-3px);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-name {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--accent-1);
+      line-height: 1.4;
+    }
+
+    /* ── Complexity badge ── */
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .badge-beginner  { background: rgba(78,205,196,0.15); color: var(--accent-5);  border: 1px solid rgba(78,205,196,0.3); }
+    .badge-intermediate { background: rgba(247,201,72,0.12); color: var(--accent-4);  border: 1px solid rgba(247,201,72,0.3); }
+    .badge-advanced  { background: rgba(123,97,255,0.15); color: var(--accent-2);  border: 1px solid rgba(123,97,255,0.3); }
+    .badge-expert    { background: rgba(255,107,107,0.12); color: var(--accent-3);  border: 1px solid rgba(255,107,107,0.3); }
+
+    .card-desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin-bottom: 0.9rem;
+    }
+
+    /* ── Code snippet ── */
+    .code-block {
+      position: relative;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 2.8rem 0.75rem 0.9rem;
+      overflow: hidden;
+    }
+
+    .code-block code {
+      font-family: var(--font-mono);
+      font-size: 0.73rem;
+      color: #a8d8c0;
+      white-space: pre-wrap;
+      word-break: break-all;
+      display: block;
+      max-height: 80px;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    .code-block.expanded code { max-height: 600px; }
+
+    /* ── Copy button ── */
+    .copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: rgba(0,255,200,0.08);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.25rem 0.5rem;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+    .copy-btn:hover { border-color: var(--accent-1); color: var(--accent-1); }
+    .copy-btn.copied { color: var(--accent-1); border-color: var(--accent-1); }
+
+    /* ── Expand toggle ── */
+    .expand-toggle {
+      background: none;
+      border: none;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--accent-2);
+      cursor: pointer;
+      padding: 0.35rem 0;
+      display: block;
+      transition: color 0.2s;
+    }
+    .expand-toggle:hover { color: var(--accent-1); }
+
+    /* ── Tag chips on card ── */
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 0.75rem;
+    }
+
+    .tag-chip {
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      padding: 0.15rem 0.55rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-muted);
+      text-transform: lowercase;
+    }
+
+    /* ── HIDDEN (filtered out) ── */
+    .feature-card.hidden {
+      display: none;
+    }
+
+    /* ── NO RESULTS message ── */
+    #no-results {
+      display: none;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      grid-column: 1 / -1;
+    }
+
+    /* ══════════════════════════════════════════
+       AI PROMPT HELPER SECTION
+    ══════════════════════════════════════════ */
+    #ai-prompts {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1.5rem 6rem;
+    }
+
+    .prompt-section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+    }
+    .prompt-section-title span { color: var(--accent-1); }
+
+    .prompt-section-desc {
+      color: var(--text-secondary);
+      max-width: 65ch;
+      margin-bottom: 2.5rem;
+      font-size: 1.05rem;
+    }
+
+    .prompts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .prompt-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s var(--ease-spring), border-color 0.3s;
+    }
+    .prompt-card.visible { opacity: 1; transform: none; }
+    .prompt-card:hover { border-color: rgba(123,97,255,0.4); }
+
+    .prompt-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent-2);
+      margin-bottom: 0.6rem;
+    }
+
+    .prompt-text {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      background: rgba(0,0,0,0.3);
+      padding: 0.75rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,0.05);
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    .prompt-text:hover { border-color: var(--accent-2); }
+
+    /* ══════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════ */
+    footer {
+      background: var(--bg-deep);
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+    }
+
+    .footer-inner {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .footer-logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent-1);
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-tagline {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── Zero Harm Note ── */
+    .zero-harm-note {
+      display: inline-block;
+      background: rgba(78,205,196,0.06);
+      border: 1px solid rgba(78,205,196,0.2);
+      border-radius: var(--radius-md);
+      padding: 0.9rem 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--accent-5);
+      line-height: 1.6;
+      max-width: 600px;
+      text-align: left;
+    }
+    .zero-harm-note strong { color: var(--accent-1); }
+
+    .footer-meta {
+      margin-top: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+
+    /* ══════════════════════════════════════════
+       KEYFRAME ANIMATIONS
+    ══════════════════════════════════════════ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(8px); }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,200,0); }
+      50%       { box-shadow: 0 0 20px 4px rgba(0,255,200,0.2); }
+    }
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE — TABLET & MOBILE
+    ══════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      #main-content {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "toc"
+          "cards";
+      }
+      #toc { position: static; max-height: none; overflow: visible; }
+      .toc-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+      .toc-link { border-left: none; border: 1px solid var(--border); border-radius: 999px; }
+    }
+
+    @media (max-width: 600px) {
+      .cards-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.5rem; }
+      .filter-pills { display: none; } /* hide on very small — only search */
+    }
+
+    /* ══════════════════════════════════════════
+       PRINT STYLES
+    ══════════════════════════════════════════ */
+    @media print {
+      #particle-canvas, #topbar, .scroll-cue { display: none; }
+      body { background: white; color: black; }
+      .feature-card { break-inside: avoid; }
+    }
+
+    /* ══════════════════════════════════════════
+       REDUCED MOTION SUPPORT (Accessibility)
+    ══════════════════════════════════════════ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+
+    /* ══════════════════════════════════════════
+       DARK / LIGHT MODE TOGGLE (future extension)
+       This block shows how you'd wire up a theme toggle.
+    ══════════════════════════════════════════ */
+    [data-theme="light"] {
+      --bg-void:    #f0f4fc;
+      --bg-deep:    #e4eaf5;
+      --bg-surface: #d8e0ef;
+      --bg-card:    #ffffff;
+      --bg-card-h:  #f5f8ff;
+      --text-primary:   #1a202c;
+      --text-secondary: #4a5568;
+      --text-muted:     #a0aec0;
+      --border:         rgba(0,180,150,0.18);
+    }
+  /* Live demo buttons, editor and frames */
+    .live-btn{margin-top:10px;font:600 .8rem var(--font-mono,monospace);color:var(--accent-1);background:transparent;border:1px solid var(--accent-1);border-radius:8px;padding:6px 12px;cursor:pointer}.live-btn:hover,.live-btn:focus-visible{background:rgba(0,255,200,.12)}.live-box{display:flex;gap:8px;margin-top:10px}.live-box[hidden]{display:none}.live-box iframe{flex:1;min-width:0;border:1px solid var(--border);border-radius:10px;background:#0b0f1a}.live-ed{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}.live-ed textarea{min-height:9em;font:12px/1.4 ui-monospace,monospace;background:#060810;color:var(--text-primary);border:1px solid var(--border);border-radius:8px;padding:8px;resize:vertical}.live-bar{display:flex;gap:8px}.live-run{font:600 .75rem var(--font-mono,monospace);color:var(--accent-1);background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer}.live-run:hover,.live-run:focus-visible{background:rgba(0,255,200,.12)}
+    </style>
+</head>
+
+<body>
+  <!-- Accessibility: Skip directly to main content -->
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <!-- ──────────────────────────────────────────
+       BACKGROUND PARTICLE CANVAS
+       Photorealistic bioluminescent particle network.
+       Each "neuron" drifts and connects to neighbors,
+       representing the interconnection of web features.
+  ─────────────────────────────────────────── -->
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+  <!-- ══════════════════ HERO ══════════════════ -->
+  <section id="hero" aria-label="Introduction">
+    <p class="hero-eyebrow">🌐 AI Web Features Atlas · 2025 Edition</p>
+    <h1 class="hero-title">
+      Every Web Feature,<br /><em>Ready for AI</em>
+    </h1>
+    <p class="hero-subtitle">
+      An exhaustive, beginner-friendly reference of HTML, CSS, JavaScript, and Web APIs
+      that you can ask any AI to automatically implement in your next project.
+      Searchable, filterable, copy-pasteable.
+    </p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-num" id="total-features">120+</div>
+        <div class="stat-label">Features catalogued</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">10</div>
+        <div class="stat-label">Technology areas</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Skill levels</div>
+      </div>
+    </div>
+
+    <div class="scroll-cue" aria-hidden="true">
+      <span>Scroll to explore</span>
+      <svg width="16" height="24" viewBox="0 0 16 24" fill="none">
+        <rect x="5.5" y="0.5" width="5" height="9" rx="2.5" stroke="currentColor"/>
+        <path d="M8 13v8M5 18l3 3 3-3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ══════════════════ STICKY TOPBAR ══════════════════ -->
+  <div id="topbar" role="search">
+    <div class="topbar-inner">
+      <span class="topbar-logo">⚡ AI Features Atlas</span>
+      <input
+        id="search-input"
+        type="search"
+        placeholder="Search features… (e.g. 'animation', 'storage', 'canvas')"
+        aria-label="Search web features"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <div class="filter-pills" role="group" aria-label="Filter by category">
+        <button class="pill active" data-filter="all">All</button>
+        <button class="pill" data-filter="html">HTML</button>
+        <button class="pill" data-filter="css">CSS</button>
+        <button class="pill" data-filter="javascript">JS</button>
+        <button class="pill" data-filter="apis">APIs</button>
+        <button class="pill" data-filter="pwa">PWA</button>
+        <button class="pill" data-filter="graphics">Graphics</button>
+        <button class="pill" data-filter="a11y">A11y</button>
+        <button class="pill" data-filter="performance">Perf</button>
+        <button class="pill" data-filter="security">Security</button>
+        <button class="pill" data-filter="ai">AI-Ready</button>
+      </div>
+      <span id="results-count" aria-live="polite"></span>
+    </div>
+  </div>
+
+  <!-- ══════════════════ MAIN TWO-COLUMN LAYOUT ══════════════════ -->
+  <div class="page-wrapper">
+    <div id="main-content">
+
+      <!-- ── TABLE OF CONTENTS (sidebar) ── -->
+      <nav id="toc" aria-label="Table of contents">
+        <p class="toc-title">Contents</p>
+        <ul class="toc-list" id="toc-list">
+          <!-- populated by JavaScript -->
+        </ul>
+      </nav>
+
+      <!-- ── CARDS AREA ── -->
+      <main id="cards-area" aria-label="Feature reference cards">
+      </main>
+
+    </div><!-- end #main-content -->
+  </div><!-- end .page-wrapper -->
+
+  <!-- ══════════════════ AI PROMPT HELPER ══════════════════ -->
+  <section id="ai-prompts" aria-labelledby="prompts-title">
+    <h2 class="prompt-section-title" id="prompts-title">
+      Ask AI to <span>Implement These</span>
+    </h2>
+    <p class="prompt-section-desc">
+      Copy these ready-made prompts into ChatGPT, Claude, Gemini, or any AI tool.
+      Each one asks for a specific feature cluster to be auto-implemented in your page.
+      Click any prompt to copy it instantly.
+    </p>
+    <div class="prompts-grid" id="prompts-grid">
+      <!-- populated by JS -->
+    </div>
+  </section>
+
+  <!-- ══════════════════ FOOTER ══════════════════ -->
+  <footer role="contentinfo">
+    <div class="footer-inner">
+      <div class="footer-logo">AI Web Features Atlas</div>
+      <p class="footer-tagline">Built for curious humans and capable machines alike.</p>
+
+      <!-- ── ZERO HARM NOTE (non-negotiable) ── -->
+      <div class="zero-harm-note" role="note" aria-label="Zero Harm and Anti-Coercion statement">
+        <strong>🛡 Zero Harm &amp; Anti-Coercion Commitment</strong><br />
+        This page contains no tracking, no analytics, no telemetry, and no hidden data
+        collection of any kind. All functionality runs purely in your browser. No private
+        keys, tokens, emails, or personal data are stored or transmitted. No feature
+        described herein should be used to coerce, surveil, manipulate, or harm people.
+        When building with these tools, please choose safety and human dignity over power.
+        Tech should heal, not hurt.
+      </div>
+
+      <p class="footer-meta" style="margin-top:1rem">
+        No tracking · No ads · No hidden telemetry · Pure local HTML ·
+        Built with care for the open web
+      </p>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════════════════════════════════
+       JAVASCRIPT — All logic is inline, no external deps.
+       Major sections are labeled with comments so you can
+       easily find, extend, or remove individual features.
+  ══════════════════════════════════════════════════════ -->
+  <script>
+  (() => {
+    'use strict';
+
+    // Descriptions are plain text that mention tags like <script>, <dialog> and <template>.
+    // Escape them before innerHTML so they show as readable text instead of being parsed as real elements.
+    const escDesc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    /* ── LIVE DEMOS: every entry has one ──────────────────────────────────────────────
+       Two kinds. (1) CURATED (LIVE below, 50 entries): a purpose-built working example, {h: height, n: copies, css, html, js}.
+       (2) EDITABLE (all other entries): the card's own code runs live in a sandbox and you can change it and press Run.
+           HTML shows the rendered markup plus what the browser parsed (meta, JSON-LD, comments); CSS gets auto-built sample markup
+           and shows which @media rules are active; JSON (the manifest) gets an installability checklist.
+       TO ADD A CURATED DEMO: LIVE.<card id> = {h, css, html, js}. Inside js you get $(selector), say(text), add(line) and <pre id=o>.
+       SAFETY: curated demos are static text in this file (sandbox: scripts + same origin, because IndexedDB, BroadcastChannel and the
+       Cache API need an origin). The EDITABLE runner executes what you type, so it is locked down: sandbox without same-origin
+       (it cannot touch this page or its storage) plus a Content-Security-Policy that blocks all network access. Edits are never
+       saved, shared or put in a URL. Demo data (IndexedDB 'atlas-demo', localStorage 'atlas-demo-theme', cache 'atlas-demo-v1')
+       has Clear buttons. No tracking, no analytics. */
+    const LIVE = {"c14": {"h": 210, "css": ".g{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.c{display:grid;grid-row:span 3;grid-template-rows:subgrid;gap:4px;background:#141c2e;padding:8px;border-radius:8px;border:1px solid #00ffc833}.c b{color:#00ffc8}.c i{color:#f7c948;font-style:normal}", "html": "<div class=g><div class=c><b>Short<\/b><p>One line.<\/p><i>Footer A<\/i><\/div><div class=c><b>A much longer title that wraps<\/b><p>Body copy that runs longer, so rows would normally drift apart between cards.<\/p><i>Footer B<\/i><\/div><div class=c><b>Mid title<\/b><p>Medium body here.<\/p><i>Footer C<\/i><\/div><\/div><p style='color:#8a9bb8'>Titles, bodies and footers align across cards: the rows are shared through subgrid.<\/p>", "js": ""}, "c15": {"h": 150, "css": "@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}.r{flex:none;width:110px;height:110px;border-radius:50%;background:conic-gradient(from var(--a),#00ffc8,#7b61ff,#ff6b6b,#00ffc8);animation:s 3s linear infinite}@keyframes s{to{--a:360deg}}.w{display:flex;gap:14px;align-items:center}", "html": "<div class=w><div class=r><\/div><p>The gradient angle is a typed custom property, so the browser can interpolate it. Untyped custom properties cannot animate.<\/p><\/div>", "js": ""}, "c17": {"h": 170, "css": ".b{width:60px;height:60px;border-radius:10px;background:#7b61ff;view-transition-name:box;margin-top:8px}.b.r{margin-left:200px;background:#00ffc8;border-radius:50%;width:90px;height:90px}", "html": "<button id=t>Move box<\/button><div class=b id=b><\/div><pre id=o><\/pre>", "js": "$('#t').onclick=()=>{const f=()=>$('#b').classList.toggle('r');if(document.startViewTransition)document.startViewTransition(f);else{f();say('startViewTransition is unsupported here, so the change is instant.')}}"}, "c18": {"h": 170, "css": ".s{height:120px;overflow:auto;border:1px solid #00ffc833;border-radius:8px}.p{position:sticky;top:0;height:5px;background:#00ffc8;transform-origin:0 50%;animation:g linear;animation-timeline:scroll(nearest)}@keyframes g{from{transform:scaleX(0)}to{transform:scaleX(1)}}.s p{margin:8px;color:#8a9bb8}", "html": "<div class=s><div class=p><\/div><p>Scroll this box. The bar is driven by scroll position, not time.<\/p><\/div>", "js": "for(let i=1;i<=8;i++)$('.s').insertAdjacentHTML('beforeend','<p>Paragraph '+i+', keep scrolling…<\/p>');if(!CSS.supports('animation-timeline','scroll()'))$('.s').insertAdjacentHTML('afterend','<p class=no>animation-timeline is unsupported in this browser.<\/p>')"}, "ai8": {"h": 190, "css": ".i{padding:8px 12px;margin:4px 0;background:#141c2e;border-radius:8px;border-left:3px solid #00ffc8;transition:opacity .5s,transform .5s;opacity:1;transform:none}@starting-style{.i{opacity:0;transform:translateY(-14px)}}", "html": "<button id=a>Add item<\/button> <button id=c>Clear<\/button><div id=l><\/div>", "js": "let n=0;$('#a').onclick=()=>{const d=document.createElement('div');d.className='i';d.textContent='Item '+ ++n+' fades in with no animation code in JS';$('#l').append(d)};$('#c').onclick=()=>{$('#l').innerHTML='';n=0}"}, "j3": {"h": 200, "css": "", "html": "<button id=a>Add child<\/button> <button id=b>Toggle attribute<\/button><div id=t style='padding:6px;border:1px dashed #00ffc855;margin-top:6px'>watched element<\/div><pre id=o><\/pre>", "js": "const t=$('#t');new MutationObserver(m=>m.forEach(r=>add(r.type==='childList'?'childList: +'+r.addedNodes.length+' node':'attributes: '+r.attributeName+' is now '+t.getAttribute(r.attributeName)))).observe(t,{childList:true,attributes:true});$('#a').onclick=()=>t.append(document.createElement('span'));$('#b').onclick=()=>t.toggleAttribute('data-on')"}, "j8": {"h": 230, "css": "", "html": "<input id=i value=hello> <button id=a>Save note<\/button> <button id=c>Clear DB<\/button><pre id=o><\/pre>", "js": "const db=new Promise((ok,no)=>{const q=indexedDB.open('atlas-demo',1);q.onupgradeneeded=()=>q.result.createObjectStore('n',{autoIncrement:true});q.onsuccess=()=>ok(q.result);q.onerror=()=>no(q.error)});const tx=async(m,f)=>{const d=await db;return new Promise((ok,no)=>{const r=f(d.transaction('n',m).objectStore('n'));r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)})};const show=async()=>say('Stored notes (they survive a reload):\\n'+(await tx('readonly',s=>s.getAll())).join('\\n'));db.then(show,e=>say('IndexedDB unavailable here: '+e));$('#a').onclick=async()=>{await tx('readwrite',s=>s.add($('#i').value));show()};$('#c').onclick=async()=>{await tx('readwrite',s=>s.clear());show()}"}, "j12": {"h": 190, "css": "", "html": "<button id=a>count++<\/button> <button id=b>rename<\/button><p>State: <b id=v><\/b><\/p><pre id=o><\/pre>", "js": "const render=t=>$('#v').textContent=JSON.stringify(t);const s=new Proxy({count:0,name:'atlas'},{set(t,k,v){const r=Reflect.set(t,k,v);add('set trap: '+k+' = '+v);render(t);return r}});render(s);$('#a').onclick=()=>s.count++;$('#b').onclick=()=>s.name=s.name==='atlas'?'ATLAS':'atlas'"}, "a10": {"h": 230, "n": 2, "css": "", "html": "<b id=w><\/b><br><input id=i value=hi> <button id=a>Broadcast<\/button><pre id=o><\/pre>", "js": "const me=Math.random().toString(36).slice(2,5);$('#w').textContent='Window '+me;const ch=new BroadcastChannel('atlas-demo');ch.onmessage=e=>add('got \"'+e.data.t+'\" from '+e.data.f);$('#a').onclick=()=>{ch.postMessage({f:me,t:$('#i').value});add('sent \"'+$('#i').value+'\"')}"}, "p2": {"h": 230, "css": "", "html": "<button id=a>Precache<\/button> <button id=b>Read it back<\/button> <button id=c>Delete cache<\/button><pre id=o><\/pre>", "js": "say('Service workers: '+('serviceWorker' in navigator?'supported':'unsupported')+' | secure context: '+isSecureContext+'\\nA real worker needs its own sw.js on https (code above).\\nBelow is the Cache Storage half it uses in install/fetch.\\n');const U='/atlas-demo/shell.txt';$('#a').onclick=async()=>{try{const c=await caches.open('atlas-demo-v1');await c.put(U,new Response('Hello from the cache at '+new Date().toLocaleTimeString()));add('cached '+U)}catch(e){add('Cache API unavailable here: '+e.message)}};$('#b').onclick=async()=>{try{const r=await caches.match(U);add(r?'cache hit: '+await r.text():'cache miss (precache first)')}catch(e){add('error: '+e.message)}};$('#c').onclick=async()=>{try{add(await caches.delete('atlas-demo-v1')?'cache deleted':'nothing to delete')}catch(e){add(e.message)}}"}, "p3": {"h": 210, "css": "", "html": "<button id=q>Queue message<\/button> <button id=n>Connection: <b id=s>offline<\/b><\/button><pre id=o><\/pre>", "js": "const box=[];let on=false;say('Background Sync API: '+(('serviceWorker' in navigator&&'SyncManager' in window)?'supported':'unsupported')+' here.\\nPattern demo: queue while offline, flush when back online (a sync event does this even after the tab closes).\\n');$('#q').onclick=()=>{const m='msg #'+(Date.now()%1000);if(on)add('sent: '+m);else{box.push(m);add('offline, queued '+m+' ('+box.length+' waiting)')}};$('#n').onclick=()=>{on=!on;$('#s').textContent=on?'online':'offline';if(on){add('back online, flushing…');while(box.length)add('sent: '+box.shift())}}"}, "p4": {"h": 200, "css": "", "html": "<button id=a>Show a local notification<\/button><pre id=o><\/pre>", "js": "say('PushManager: '+('PushManager' in window?'yes':'no')+'\\nNotification permission: '+(window.Notification?Notification.permission:'unsupported')+'\\nSecure context: '+isSecureContext+'\\nReal push also needs a service worker and a push server (VAPID keys).\\nThis button shows the notification half only.\\n');$('#a').onclick=async()=>{if(!window.Notification)return add('Notifications unsupported');const p=await Notification.requestPermission();add('permission: '+p);if(p==='granted')new Notification('Atlas demo',{body:'Notifications work on this origin.'})}"}, "pe2": {"h": 200, "css": "", "html": "<button id=a>Sum 400M numbers in a worker<\/button> <button id=b>Same on main thread<\/button><p>Spinner: <span id=sp>◐<\/span> (freezes if the main thread is blocked)<\/p><pre id=o><\/pre>", "js": "const T=['◐','◓','◑','◒'];let k=0;setInterval(()=>$('#sp').textContent=T[k++%4],120);const src='onmessage=e=>{let s=0;for(let i=0;i<e.data;i++)s+=i;postMessage(s)}';$('#a').onclick=()=>{const w=new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'})));const t=performance.now();say('worker running, spinner keeps moving…');w.onmessage=e=>{say('worker result '+e.data+' in '+Math.round(performance.now()-t)+' ms');w.terminate()};w.postMessage(4e8)};$('#b').onclick=()=>{say('main thread busy, spinner freezes…');setTimeout(()=>{const t=performance.now();let s=0;for(let i=0;i<4e8;i++)s+=i;say('main thread result '+s+' in '+Math.round(performance.now()-t)+' ms')},50)}"}, "pe4": {"h": 200, "css": "", "html": "<button id=a>Queue 300 small jobs<\/button><pre id=o><\/pre>", "js": "const ric=window.requestIdleCallback||(f=>setTimeout(()=>f({timeRemaining:()=>8}),1));let q=0;function work(d){let n=0;while(q>0&&d.timeRemaining()>1){for(let j=0;j<2e4;j++)Math.sqrt(j);q--;n++}add('idle slice ran '+n+' jobs, '+q+' left');if(q>0)ric(work)}$('#a').onclick=()=>{q+=300;say('');ric(work)};say('Jobs run only when the browser has spare time, so input stays responsive.')"}, "pe5": {"h": 230, "css": "", "html": "<button id=a>Block 120 ms (long task)<\/button> <button id=b>Shift layout<\/button><div id=top><\/div><pre id=o><\/pre>", "js": "const ty=['paint','largest-contentful-paint','layout-shift','longtask'].filter(t=(PerformanceObserver.supportedEntryTypes||[]).includes(t));say('observing: '+ty.join(', ')+'\\n');ty.forEach(t=>new PerformanceObserver(l=>l.getEntries().forEach(e=>add(e.entryType+' '+(e.name||'')+' @'+Math.round(e.startTime)+'ms'+(e.duration?' dur '+Math.round(e.duration):'')+(e.value!==undefined?' value '+e.value.toFixed(3):'')))).observe({type:t,buffered:true}));$('#a').onclick=()=>{const t=performance.now();while(performance.now()-t<120);};$('#b').onclick=()=>setTimeout(()=>{const d=document.createElement('div');d.textContent='surprise';d.style.cssText='height:30px;background:#7b61ff';$('#top').before(d)},800)"}, "g4": {"h": 210, "css": "", "html": "<canvas id=c width=260 height=120><\/canvas><pre id=o><\/pre>", "js": "if(!('transferControlToOffscreen' in $('#c')))say('OffscreenCanvas is unsupported in this browser.');else{const src='onmessage=e=>{const c=e.data,x=c.getContext(\"2d\");let t=0;(function f(){x.clearRect(0,0,260,120);for(let i=0;i<24;i++){const a=t+i*.26;x.fillStyle=\"hsl(\"+(i*15+t*50)+\",90%,60%)\";x.fillRect(130+Math.cos(a)*(30+i*2.2)-4,60+Math.sin(a*1.3)*(26+i)-4,8,8)}t+=.04;setTimeout(f,16)})()}';const w=new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'})));const o=$('#c').transferControlToOffscreen();w.postMessage(o,[o]);say('Drawn inside a worker thread; the main thread only owns the canvas element.')}"}, "s6": {"h": 240, "css": "", "html": "<pre id=o><\/pre>", "js": "const F=['geolocation','camera','fullscreen'];function rep(){var p=document.permissionsPolicy||document.featurePolicy;return p?F.map(function(x){return x+(p.allowsFeature(x)?' yes':' NO')}).join(' | '):'API unsupported'}say('this frame: '+rep()+'\\n');onmessage=e=>add(e.data.k+': '+e.data.r);[['child, no allow attribute',''],['child, allow=\"geolocation \\'none\\'; camera \\'none\\'\"',\"geolocation 'none'; camera 'none'\"]].forEach(a=>{const f=document.createElement('iframe');f.hidden=true;f.allow=a[1];f.srcdoc='<script>var F='+JSON.stringify(F)+';parent.postMessage({k:'+JSON.stringify(a[0])+',r:('+rep+')()},\"*\")<\\/script>';document.body.append(f)})"}, "ai1": {"h": 170, "css": "", "html": "<atlas-badge name=Ada role=Compiler><\/atlas-badge><atlas-badge name=Linus><\/atlas-badge><p><button id=a>Change a name attribute<\/button><\/p>", "js": "class AtlasBadge extends HTMLElement{static observedAttributes=['name','role'];connectedCallback(){this.attachShadow({mode:'open'});this.draw()}attributeChangedCallback(){if(this.shadowRoot)this.draw()}draw(){const d=document.createElement('div'),s=document.createElement('small');d.style.cssText='display:inline-block;margin:4px;padding:8px 12px;border-radius:999px;background:#7b61ff;color:#fff;font:600 13px system-ui';s.style.cssText='opacity:.8;font-weight:400';s.textContent=this.getAttribute('role')||'member';d.append((this.getAttribute('name')||'?')+' ',s);this.shadowRoot.replaceChildren(d)}}customElements.define('atlas-badge',AtlasBadge);$('#a').onclick=()=>$('atlas-badge').setAttribute('name',['Ada','Grace','Alan'][Math.floor(Math.random()*3)])"}, "wc1": {"h": 190, "css": "p{color:#ff6b6b}", "html": "<p>Light DOM paragraph: the page's red rule styles it.<\/p><div id=h><\/div>", "js": "const r=$('#h').attachShadow({mode:'open'});r.innerHTML='<style>p{color:#00ffc8;border-left:3px solid #00ffc8;padding-left:8px}<\/style><p>Shadow DOM paragraph: the page red p rule cannot reach me.<\/p><slot><\/slot>';$('#h').insertAdjacentHTML('beforeend','<em style=color:#f7c948>I am light DOM content projected through a slot.<\/em>')"}, "a7": {"h": 210, "css": "", "html": "<button id=a>Check availability<\/button> <button id=b>Open device chooser<\/button><pre id=o><\/pre>", "js": "say('Web Bluetooth: '+('bluetooth' in navigator?'yes':'no')+' | Web HID: '+('hid' in navigator?'yes':'no')+' | Web USB: '+('usb' in navigator?'yes':'no')+'\\nSecure context: '+isSecureContext+'\\nThe chooser needs a click and nearby hardware. This demo lists the choice and never connects.\\n');$('#a').onclick=async()=>{try{add('Bluetooth radio available: '+await navigator.bluetooth.getAvailability())}catch(e){add('unavailable: '+e.message)}};$('#b').onclick=async()=>{try{const d=await navigator.bluetooth.requestDevice({acceptAllDevices:true});add('you chose: '+(d.name||'(unnamed device)')+' (not connected)')}catch(e){add(e.name+': '+e.message)}}"}, "g3": {"h": 240, "css": "", "html": "<canvas id=c width=260 height=160><\/canvas><pre id=o><\/pre>", "js": "const gl=$('#c').getContext('webgl');if(!gl)say('WebGL is unavailable here.');else{const sh=(t,s)=>{const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);return o};const p=gl.createProgram();gl.attachShader(p,sh(gl.VERTEX_SHADER,'attribute vec2 a;attribute vec3 c;uniform float t;varying vec3 v;void main(){float s=sin(t),k=cos(t);gl_Position=vec4(a.x*k-a.y*s,a.x*s+a.y*k,0.,1.);v=c;}'));gl.attachShader(p,sh(gl.FRAGMENT_SHADER,'precision mediump float;varying vec3 v;void main(){gl_FragColor=vec4(v,1.);}'));gl.linkProgram(p);gl.useProgram(p);gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([0,.8,1,.2,.4,-.8,-.6,.2,1,.6,.8,-.6,.5,.3,1]),gl.STATIC_DRAW);const a=gl.getAttribLocation(p,'a'),c=gl.getAttribLocation(p,'c'),u=gl.getUniformLocation(p,'t');gl.enableVertexAttribArray(a);gl.vertexAttribPointer(a,2,gl.FLOAT,false,20,0);gl.enableVertexAttribArray(c);gl.vertexAttribPointer(c,3,gl.FLOAT,false,20,8);gl.clearColor(.02,.03,.06,1);(function f(t){gl.clear(gl.COLOR_BUFFER_BIT);gl.uniform1f(u,t/900);gl.drawArrays(gl.TRIANGLES,0,3);requestAnimationFrame(f)})(0);say('Plain WebGL, no library: shaders compile on your GPU. Three.js wraps exactly this.')}"}, "g5": {"h": 190, "css": "#b{height:110px;border-radius:10px;background:paint(halftone);--dot:#7b61ff}", "html": "<div id=b><\/div><pre id=o><\/pre>", "js": "if(!(window.CSS&&CSS.paintWorklet))say('CSS Paint API is Chromium-only; this browser ignores paint(), so the box has no background.');else{const src='registerPaint(\"halftone\",class{static get inputProperties(){return[\"--dot\"]}paint(c,g,p){c.fillStyle=p.get(\"--dot\").toString().trim()||\"#7b61ff\";for(let y=6;y<g.height;y+=12)for(let x=6;x<g.width;x+=12){c.beginPath();c.arc(x,y,5*(1-x/g.width)+1,0,6.283);c.fill()}}})';CSS.paintWorklet.addModule(URL.createObjectURL(new Blob([src],{type:'text/javascript'}))).then(()=>say('Worklet registered: the background is painted by JS in the paint step.'),e=>say('Could not load the worklet: '+e))}"}, "ai4": {"h": 210, "css": "", "html": "<pre id=o>checking…<\/pre>", "js": "(async()=>{const L=['WebAssembly: '+(typeof WebAssembly==='object'?'yes':'no'),'Cross-origin isolated (threaded WASM): '+(self.crossOriginIsolated?'yes':'no'),'Memory: '+(navigator.deviceMemory||'unknown')+' GB | cores: '+navigator.hardwareConcurrency];if(navigator.gpu){try{const a=await navigator.gpu.requestAdapter();L.push('WebGPU: '+(a?'yes':'no adapter'))}catch(e){L.push('WebGPU error: '+e.message)}}else L.push('WebGPU: no');L.push('','Readiness check only. Real models download tens to hundreds of MB, so this page loads none.',navigator.gpu?'Verdict: small WebLLM models are feasible.':'Verdict: use the Transformers.js WASM backend with a small model.');say(L.join('\\n'))})()"}, "j1": {"h": 190, "css": ".s{height:100px;overflow:auto;border:1px solid #00ffc833;border-radius:8px}.b{height:90px;margin:70px 8px;border-radius:8px;background:#141c2e;display:grid;place-items:center;opacity:.3;transition:.4s}.b.in{opacity:1;background:#00ffc8;color:#060810}", "html": "<div class=s id=s><\/div><pre id=o><\/pre>", "js": "for(let i=1;i<=6;i++){const d=document.createElement('div');d.className='b';d.textContent='Box '+i;$('#s').append(d)}const io=new IntersectionObserver(es=>es.forEach(x=>{x.target.classList.toggle('in',x.isIntersecting);say(x.target.textContent+(x.isIntersecting?' entered':' left')+' the viewport')}),{root:$('#s'),threshold:.6});document.querySelectorAll('.b').forEach(b=>io.observe(b))"}, "j2": {"h": 180, "css": "#r{resize:both;overflow:auto;width:60%;min-width:80px;min-height:50px;border:2px dashed #7b61ff;padding:8px;border-radius:8px}", "html": "<div id=r>Drag my bottom-right corner<\/div><pre id=o><\/pre>", "js": "new ResizeObserver(es=>es.forEach(x=>say('size: '+Math.round(x.contentRect.width)+' x '+Math.round(x.contentRect.height)+' px'))).observe($('#r'))"}, "j4": {"h": 180, "css": "", "html": "<canvas id=c width=280 height=50><\/canvas><br><button id=a>Pause / resume<\/button><pre id=o><\/pre>", "js": "const x=$('#c').getContext('2d');let last=0,run=true,px=0;function f(t){const dt=(t-last)/1000;last=t;if(run){px=(px+120*dt)%280;x.clearRect(0,0,280,50);x.fillStyle='#00ffc8';x.beginPath();x.arc(px,25,12,0,6.28);x.fill();say('frame time '+(dt*1000).toFixed(1)+' ms; speed stays 120 px/s at any frame rate')}requestAnimationFrame(f)}requestAnimationFrame(f);$('#a').onclick=()=>run=!run"}, "j5": {"h": 190, "css": "#e{width:50px;height:50px;background:#7b61ff;border-radius:8px}", "html": "<div id=e><\/div><p><button id=p>Play<\/button> <button id=r>Reverse<\/button> <button id=c>Cancel<\/button><\/p><pre id=o><\/pre>", "js": "const a=$('#e').animate([{transform:'translateX(0) rotate(0)'},{transform:'translateX(200px) rotate(180deg)'}],{duration:1200,easing:'ease-in-out',fill:'both'});a.pause();$('#p').onclick=()=>{a.play();say('playState: '+a.playState)};$('#r').onclick=()=>a.reverse();$('#c').onclick=()=>a.cancel();a.finished.then(()=>add('finished promise resolved'),()=>{})"}, "j6": {"h": 200, "css": "", "html": "<button id=a>Fetch JSON<\/button> <button id=b>Fetch broken JSON<\/button><pre id=o><\/pre>", "js": "async function get(u){try{const r=await fetch(u);if(!r.ok)throw new Error('HTTP '+r.status);return await r.json()}catch(e){return{error:e.message}}}$('#a').onclick=async()=>say(JSON.stringify(await get('data:application/json,{\"hello\":\"atlas\",\"items\":[1,2,3]}'),null,2));$('#b').onclick=async()=>say(JSON.stringify(await get('data:application/json,{bad json'),null,2))+add('(same try/catch handles network and parse errors; data: URLs keep this offline)')"}, "j7": {"h": 200, "css": "", "html": "<input id=i value=dark> <button id=a>Save<\/button> <button id=c>Clear<\/button><pre id=o><\/pre>", "js": "const k='atlas-demo-theme';const show=()=>{try{say('localStorage[\"'+k+'\"] = '+JSON.stringify(localStorage.getItem(k))+'\\nReload the page: the value persists. Clear removes it.')}catch(e){say('Storage unavailable here: '+e.message)}};$('#a').onclick=()=>{try{localStorage.setItem(k,$('#i').value)}catch(e){}show()};$('#c').onclick=()=>{try{localStorage.removeItem(k)}catch(e){}show()};show()"}, "j9": {"h": 190, "css": "", "html": "<input id=i value='Copied from the atlas'> <button id=a>Copy<\/button> <button id=b>Paste<\/button><pre id=o><\/pre>", "js": "$('#a').onclick=async()=>{try{await navigator.clipboard.writeText($('#i').value);say('written to the clipboard')}catch(e){say('write blocked: '+e.message)}};$('#b').onclick=async()=>{try{say('read: '+await navigator.clipboard.readText())}catch(e){say('read blocked (needs permission): '+e.message)}}"}, "j10": {"h": 190, "css": ".i{display:inline-block;padding:8px 12px;background:#7b61ff;border-radius:8px;cursor:grab}.z{margin-top:10px;height:60px;border:2px dashed #00ffc855;border-radius:8px;display:grid;place-items:center}.z.o{background:#00ffc822}", "html": "<span class=i id=d draggable=true>Drag me<\/span><div class=z id=z>Drop here<\/div><pre id=o><\/pre>", "js": "$('#d').ondragstart=e=>{e.dataTransfer.setData('text/plain','atlas item');say('dragstart')};const z=$('#z');z.ondragover=e=>{e.preventDefault();z.classList.add('o')};z.ondragleave=()=>z.classList.remove('o');z.ondrop=e=>{e.preventDefault();z.classList.remove('o');z.textContent='Dropped: '+e.dataTransfer.getData('text/plain');say('drop fired')}"}, "j11": {"h": 170, "css": "", "html": "<button id=a>Dispatch event<\/button><pre id=o><\/pre>", "js": "const t=document.createElement('div');t.addEventListener('atlas:greet',e=>add('heard atlas:greet detail='+JSON.stringify(e.detail)+' bubbles='+e.bubbles));document.body.append(t);let n=0;$('#a').onclick=()=>t.dispatchEvent(new CustomEvent('atlas:greet',{detail:{n:++n,from:'button'},bubbles:true}))"}, "a1": {"h": 170, "css": "", "html": "<button id=a>Get my position<\/button><pre id=o><\/pre>", "js": "say('Asks permission. The result is rounded to 2 decimals and never leaves this page.');$('#a').onclick=()=>navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>say('lat '+p.coords.latitude.toFixed(2)+', lon '+p.coords.longitude.toFixed(2)+' (+/-'+Math.round(p.coords.accuracy)+' m)'),e=>say('Error '+e.code+': '+e.message),{timeout:8000}):say('Geolocation unsupported')"}, "a2": {"h": 170, "css": "", "html": "<button id=a>Show a notification<\/button><pre id=o><\/pre>", "js": "say('permission: '+(window.Notification?Notification.permission:'unsupported'));$('#a').onclick=async()=>{if(!window.Notification)return say('Notifications unsupported');const p=await Notification.requestPermission();say('permission: '+p);if(p==='granted')new Notification('Atlas demo',{body:'Hello from the Notifications API'})}"}, "a3": {"h": 270, "css": "", "html": "<video id=v autoplay playsinline muted width=200><\/video><br><button id=a>Start camera<\/button> <button id=b>Stop<\/button><pre id=o><\/pre>", "js": "let s;$('#a').onclick=async()=>{try{s=await navigator.mediaDevices.getUserMedia({video:true});$('#v').srcObject=s;say('camera on: local preview only, nothing is recorded or sent')}catch(e){say(e.name+': '+e.message)}};$('#b').onclick=()=>{s&&s.getTracks().forEach(t=>t.stop());$('#v').srcObject=null;say('camera stopped')}"}, "a4": {"h": 180, "css": "", "html": "<button id=a>Keep screen on<\/button> <button id=b>Release<\/button><pre id=o><\/pre>", "js": "let w;say('Screen Wake Lock: '+('wakeLock' in navigator?'supported':'unsupported'));$('#a').onclick=async()=>{try{w=await navigator.wakeLock.request('screen');say('lock held, released='+w.released);w.onrelease=()=>add('released')}catch(e){say(e.name+': '+e.message)}};$('#b').onclick=async()=>{if(w){await w.release();say('released='+w.released)}}"}, "a5": {"h": 160, "css": "", "html": "<button id=a>Buzz pattern<\/button><pre id=o><\/pre>", "js": "$('#a').onclick=()=>say('vibrate() returned '+(navigator.vibrate?navigator.vibrate([100,50,100,50,200]):'unsupported')+' (desktop browsers usually ignore it)')"}, "a6": {"h": 190, "css": "", "html": "<input id=i value='Hello from the Web Speech API'> <button id=a>Speak<\/button><pre id=o><\/pre>", "js": "say('speechSynthesis: '+('speechSynthesis' in window?'supported':'unsupported')+' | recognition: '+(window.SpeechRecognition||window.webkitSpeechRecognition?'supported':'unsupported'));$('#a').onclick=()=>{if(!window.speechSynthesis)return;speechSynthesis.cancel();const u=new SpeechSynthesisUtterance($('#i').value);u.onend=()=>add('done');speechSynthesis.speak(u);add('speaking...')}"}, "a8": {"h": 200, "css": "", "html": "<pre id=o><\/pre>", "js": "say('PaymentRequest: '+('PaymentRequest' in window?'supported':'unsupported')+'\\nA real sheet needs a payment method and a merchant backend, so this only checks support and builds a request object. No money moves.\\n');if(window.PaymentRequest){try{const r=new PaymentRequest([{supportedMethods:'https://example.com/pay'}],{total:{label:'Demo total',amount:{currency:'USD',value:'1.00'}}});add('request object created, id '+r.id)}catch(e){add('error: '+e.message)}}"}, "a9": {"h": 170, "css": "", "html": "<button id=a>Share<\/button><pre id=o><\/pre>", "js": "$('#a').onclick=async()=>{const d={title:'Web Features Atlas',text:'Live web feature demos',url:'https://example.com'};if(navigator.share){try{await navigator.share(d);say('shared')}catch(e){say(e.name+': '+e.message)}}else{try{await navigator.clipboard.writeText(d.url);say('Web Share unsupported: fell back to copying the link')}catch(e){say('Web Share unsupported and copy blocked')}}}"}, "g1": {"h": 200, "css": "", "html": "<canvas id=c width=260 height=130><\/canvas><br><button id=a>Redraw<\/button><pre id=o><\/pre>", "js": "const x=$('#c').getContext('2d');function d(){x.fillStyle='#0b0f1a';x.fillRect(0,0,260,130);const g=x.createLinearGradient(0,0,260,0);g.addColorStop(0,'#00ffc8');g.addColorStop(1,'#7b61ff');x.fillStyle=g;for(let i=0;i<12;i++){x.globalAlpha=.4+Math.random()*.6;x.beginPath();x.arc(20+Math.random()*220,15+Math.random()*100,8+Math.random()*18,0,6.283);x.fill()}x.globalAlpha=1;x.strokeStyle='#f7c948';x.lineWidth=2;x.strokeRect(6,6,248,118);x.fillStyle='#e8edf5';x.font='14px sans-serif';x.fillText('Canvas 2D',12,24)}d();$('#a').onclick=d"}, "p5": {"h": 190, "css": "", "html": "<button id=a disabled>Install app<\/button><pre id=o><\/pre>", "js": "let ev;say('display-mode standalone: '+matchMedia('(display-mode: standalone)').matches+'\\nWaiting for beforeinstallprompt (Chromium, installable https site with a manifest)...\\n');addEventListener('beforeinstallprompt',e=>{e.preventDefault();ev=e;$('#a').disabled=false;add('beforeinstallprompt fired: install is available')});$('#a').onclick=async()=>{ev.prompt();add('outcome: '+(await ev.userChoice).outcome)};addEventListener('appinstalled',()=>add('appinstalled'))"}, "ac1": {"h": 230, "css": ":focus-visible{outline:3px solid #f7c948;outline-offset:3px}#m{margin-top:8px;padding:8px;border:1px solid #00ffc8;border-radius:8px}", "html": "<button id=a>Open panel (focus moves in)<\/button> <button>Other<\/button><div id=m hidden><p>Focus moved to Close. Esc or Close returns it to the opener.<\/p><button id=x>Close<\/button><\/div><pre id=o><\/pre>", "js": "let from;$('#a').onclick=e=>{from=e.currentTarget;$('#m').hidden=false;$('#x').focus();say('focus moved to: '+document.activeElement.textContent)};const cl=()=>{$('#m').hidden=true;from.focus();say('focus restored to: '+document.activeElement.textContent)};$('#x').onclick=cl;onkeydown=e=>{if(e.key==='Escape'&&!$('#m').hidden)cl()}"}, "pe3": {"h": 170, "css": "", "html": "<button id=a>Load module on click<\/button><pre id=o><\/pre>", "js": "let m;$('#a').onclick=async()=>{const t=performance.now();m??=await import(URL.createObjectURL(new Blob(['export const hello=n=>\"hello \"+n+\", loaded lazily\";export default 42'],{type:'text/javascript'})));say(m.hello('atlas')+' | default export '+m.default+' | '+Math.round(performance.now()-t)+' ms (a second click reuses the cached module)')}"}, "s4": {"h": 230, "css": "", "html": "<textarea id=i rows=2 style='width:100%'><\/textarea><button id=a>Sanitize<\/button><div id=r style='margin-top:6px;padding:6px;border:1px dashed #00ffc855'><\/div><pre id=o><\/pre>", "js": "$('#i').value='<b>bold<\/b> <img src=x onerror=\"steal()\"> <script>evil()<\\/script> <a href=\"javascript:evil()\">link<\/a>';const ok={B:1,I:1,EM:1,STRONG:1,P:1,BR:1,A:1};function clean(h){const d=new DOMParser().parseFromString(h,'text/html'),bad=[];(function w(n){[...n.childNodes].forEach(c=>{if(c.nodeType===1){if(!ok[c.tagName]){bad.push('<'+c.tagName.toLowerCase()+'> removed');c.remove();return}[...c.attributes].forEach(a=>{if(!(c.tagName==='A'&&a.name==='href'&&/^https?:/.test(a.value))){bad.push(c.tagName.toLowerCase()+'['+a.name+'] removed');c.removeAttribute(a.name)}});w(c)}})})(d.body);return{html:d.body.innerHTML,bad}}$('#a').onclick=()=>{const r=clean($('#i').value);$('#r').innerHTML=r.html;say('Removed: '+(r.bad.join(', ')||'nothing')+'\\nAllowlist idea only: use DOMPurify in production.')}"}, "ai6": {"h": 220, "css": "", "html": "<button id=a>Start stream<\/button> <button id=b>Close<\/button><pre id=o><\/pre>", "js": "say('No server here: a local timer plays the server and sends text in the real SSE wire format.\\n');let t,n=0;const parse=c=>{const m={};c.trim().split('\\n').forEach(l=>{const i=l.indexOf(':');m[l.slice(0,i)]=l.slice(i+1).trim()});return m};$('#a').onclick=()=>{clearInterval(t);t=setInterval(()=>{const m=parse('id: '+ ++n+'\\nevent: tick\\ndata: {\"n\":'+n+'}\\n\\n');add('event='+m.event+' id='+m.id+' data='+m.data+(n%4===0?'  (a real EventSource also auto-reconnects and resends Last-Event-ID)':''))},700)};$('#b').onclick=()=>{clearInterval(t);add('closed')}"}, "ai7": {"h": 220, "css": "", "html": "<button id=a>Connect<\/button> <button id=b>Send<\/button> <button id=c>Close<\/button><pre id=o><\/pre>", "js": "say('No server here: a local echo object follows the WebSocket API and its readyState lifecycle.\\n');class Fake{constructor(){this.readyState=0;setTimeout(()=>{this.readyState=1;this.onopen&&this.onopen()},400)}send(d){setTimeout(()=>this.onmessage&&this.onmessage({data:'echo: '+d}),250)}close(){this.readyState=2;setTimeout(()=>{this.readyState=3;this.onclose&&this.onclose({code:1000})},200)}}let w,n=0;$('#a').onclick=()=>{w=new Fake();add('CONNECTING (0)');w.onopen=()=>add('onopen, readyState '+w.readyState);w.onmessage=e=>add('onmessage '+e.data);w.onclose=e=>add('onclose code '+e.code+', readyState '+w.readyState)};$('#b').onclick=()=>{if(w&&w.readyState===1){w.send('hello '+ ++n);add('sent hello '+n)}else add('not open')};$('#c').onclick=()=>w&&w.close()"}, "wc2": {"h": 190, "css": "", "html": "<button id=a>Import two modules<\/button><pre id=o><\/pre>", "js": "const mk=s=>URL.createObjectURL(new Blob([s],{type:'text/javascript'}));$('#a').onclick=async()=>{const utils=mk(\"export const fmt=d=>new Intl.DateTimeFormat('en-GB',{timeZone:'UTC'}).format(d);export default n=>'Hi '+n\");const main=mk(`import greet,{fmt} from \"${utils}\";export const out=greet('atlas')+' on '+fmt(new Date(0))`);const m=await import(main);say('main module imported utils module: '+m.out)}"}, "wc3": {"h": 210, "css": "", "html": "<select id=l><option>en-US<option>fr-FR<option>de-DE<option>ja-JP<option>ar-EG<\/select><pre id=o><\/pre>", "js": "const show=()=>{const l=$('#l').value,d=new Date(Date.UTC(2026,9,27));say(new Intl.DateTimeFormat(l,{dateStyle:'full',timeZone:'UTC'}).format(d)+'\\n'+new Intl.NumberFormat(l,{style:'currency',currency:'EUR'}).format(1234567.891)+'\\n'+new Intl.RelativeTimeFormat(l,{numeric:'auto'}).format(-1,'day')+'\\n'+new Intl.ListFormat(l).format(['A','B','C']))};$('#l').onchange=show;show()"}, "wc4": {"h": 180, "css": "", "html": "<button id=a>Start slow request<\/button> <button id=b>Abort<\/button><pre id=o><\/pre>", "js": "let c;const slow=s=>new Promise((ok,no)=>{const t=setTimeout(()=>ok('finished'),3000);s.addEventListener('abort',()=>{clearTimeout(t);no(s.reason)})});$('#a').onclick=async()=>{c=new AbortController();say('request started (3 s)...');try{say(await slow(c.signal))}catch(e){say('aborted: '+e.name+' (the same signal works in fetch(url,{signal}))')}};$('#b').onclick=()=>c&&c.abort()"}};
+    const LIVE_CSS = "body{margin:0;padding:10px;font:13px/1.45 system-ui,sans-serif;color:#e8edf5;background:#0b0f1a}button{font:inherit;color:#00ffc8;background:#111827;border:1px solid #00ffc855;border-radius:6px;padding:5px 10px;cursor:pointer}button:hover{background:#1a2540}pre{margin:6px 0 0;padding:6px;background:#060810;border-radius:6px;white-space:pre-wrap;max-height:120px;overflow:auto;font:12px ui-monospace,monospace}input,select,textarea{font:inherit;padding:4px 6px;background:#060810;color:#e8edf5;border:1px solid #333;border-radius:6px}.no{color:#ff6b6b}", LIVE_JS = "const $=s=>document.querySelector(s);const say=(t,s)=>{$(s||'#o').textContent=t};const add=(t,s)=>{const e=$(s||'#o');e.textContent+=t+'\\n';e.scrollTop=1e9};", LIVE_GEN = "(function(){\nvar code=window.CODE,T=code.replace(/\\/\\*[\\s\\S]*?\\*\\//g,'').replace(/^\\s*\\/\\/.*$/gm,'').trim();\nvar out=document.createElement('pre');out.hidden=true;document.body.append(out);\nfunction log(){out.hidden=false;out.textContent+=[].map.call(arguments,function(x){return typeof x==='string'?x:JSON.stringify(x)}).join(' ')+'\\n'}\nconsole.log=console.info=console.warn=log;console.error=function(){log.apply(0,['error:'].concat([].slice.call(arguments)))};\nonerror=function(m){log('error: '+m);return true};\nfunction show(t,l){var p=document.createElement('pre');p.textContent=t+'\\n'+l.join('\\n');document.body.append(p)}\nfunction btn(t,f){var b=document.createElement('button');b.textContent=t;b.onclick=f;b.style.margin='0 6px 6px 0';document.body.prepend(b)}\nvar json=null;if(/^[{\\[]/.test(T)){try{json=JSON.parse(T)}catch(e){}}\nvar kind=json?'json':/^<\/.test(T)?'html':(/^(const|let|var|function|async|class|import|export|if|for|new|document|window|navigator)\\b|^\\(/.test(T)||T.indexOf('{')<0)?'js':'css';\nif(kind==='json'){\n var need=[['name or short_name',json.name||json.short_name],['start_url',json.start_url],['display: standalone, fullscreen or minimal-ui',/standalone|fullscreen|minimal-ui/.test(json.display)],['an icon of 192px',(json.icons||[]).some(function(i){return /192/.test(i.sizes)})],['an icon of 512px',(json.icons||[]).some(function(i){return /512/.test(i.sizes)})]];\n show('Valid JSON. Installability checklist (Chromium):',need.map(function(n){return (n[1]?'[ok] ':'[missing] ')+n[0]}));\n if(/^#[0-9a-f]{3,8}$/i.test(json.theme_color||'')){var s=document.createElement('div');s.textContent='theme_color '+json.theme_color;s.style.cssText='padding:8px;border-radius:6px;color:#fff;background:'+json.theme_color;document.body.append(s)}\n}else if(kind==='html'){\n document.body.append(document.createRange().createContextualFragment(code));\n var L=[];document.body.querySelectorAll('meta,link,img,source').forEach(function(e){L.push('<'+e.localName+'> '+[].map.call(e.attributes,function(a){return a.name+'=\"'+a.value+'\"'}).join(' '))});\n document.body.querySelectorAll('script[type=\"application/ld+json\"]').forEach(function(s){try{var j=JSON.parse(s.textContent);L.push('JSON-LD valid, @type = '+(j['@type']||'(see @graph)'))}catch(e){L.push('JSON-LD INVALID: '+e.message)}});\n for(var w=document.createTreeWalker(document.body,128);w.nextNode();)L.push('comment: '+w.currentNode.data.trim().slice(0,80));\n if(L.length)show('What the browser parsed (head tags and image sources are not drawn here):',L);\n document.querySelectorAll('dialog').forEach(function(d){btn('showModal() '+(d.id||''),function(){d.showModal()})});\n document.querySelectorAll('[aria-live]').forEach(function(r){btn('Announce in '+(r.id||'region'),function(){r.textContent='Update at '+new Date().toLocaleTimeString()})});\n addEventListener('submit',function(e){e.preventDefault();log('submit fired: the form passed validation')});\n}else if(kind==='css'){\n var st=document.createElement('style');st.textContent=code+'\\n.ai{background:#141c2e;padding:8px;border-radius:6px;min-width:36px;text-align:center;color:#e8edf5}';document.head.append(st);\n var c=code.replace(/\\/\\*[\\s\\S]*?\\*\\//g,'').replace(/@[\\w-]+[^{;]*[{;]/g,function(m){return m.slice(-1)==='{'?'{':''});\n var seen={},sels=[];(c.match(/[^{}]+(?=\\{)/g)||[]).forEach(function(s){s.split(',').forEach(function(x){x=x.trim();if(x&&!seen[x]&&!/^(\\*|:root|html|body|from|to)$|&|^[:\\[\\d]/.test(x)){seen[x]=1;sels.push(x)}})});\n var img='<img alt=\"\" width=70 height=44 src=\"data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'70\\' height=\\'44\\'%3E%3Crect width=\\'70\\' height=\\'44\\' fill=\\'%237b61ff\\'/%3E%3C/svg%3E\">',V={img:1,input:1,br:1,hr:1};\n var esc=function(s){return s.replace(/&/g,'&amp;').replace(/<\/g,'&lt;')};\n var el=function(c,kids,label){var has=(c.match(/:has\\(([^)]*)\\)/)||[])[1];c=c.replace(/:(has|is|where|not)\\([^)]*\\)/g,'').replace(/::?[\\w-]+(\\([^)]*\\))?/g,'').replace(/\\[[^\\]]*\\]/g,'');var tag=(c.match(/^[a-z][\\w-]*/i)||['div'])[0].toLowerCase(),cl=(c.match(/\\.[\\w-]+/g)||[]).map(function(x){return x.slice(1)}).join(' '),id=(c.match(/#[\\w-]+/)||[''])[0].slice(1);if(tag==='img')return img;if(V[tag])return '<'+tag+'>';return '<'+tag+(cl?' class=\"'+cl+'\"':'')+(id?' id=\"'+id+'\"':'')+'>'+(kids||(label?esc(label):'Sample '+tag))+(has?build(has):'')+'<\/'+tag+'>'};\n var build=function(sel){var p=sel.trim().split(/\\s*[>+~]\\s*|\\s+/).filter(Boolean),h='';for(var i=p.length-1;i>=0;i--)h=el(p[i],h,i===p.length-1?sel:'');return h};\n var g=document.createElement('div');g.id='gen';g.innerHTML=sels.slice(0,14).map(function(s){return '<div style=\"margin:0 0 8px\">'+build(s)+'<\/div>'}).join('');document.body.append(g);\n [].forEach.call(g.querySelectorAll('#gen > div > *'),function(n){if(!n.children.length&&/grid|flex/.test(getComputedStyle(n).display))n.innerHTML='<div class=ai>1<\/div><div class=ai>2<\/div><div class=ai>3<\/div><div class=ai>4<\/div>'});\n var mq=(code.replace(/\\/\\*[\\s\\S]*?\\*\\//g,'').match(/@media[^{]+/g)||[]).map(function(m){return m.replace('@media','').trim()});\n if(mq.length)show('@media conditions on your device right now:',mq.map(function(q){var ok;try{ok=matchMedia(q).matches}catch(e){ok=false}return (ok?'[active]   ':'[inactive] ')+q}));\n}else{\n document.body.insertAdjacentHTML('beforeend','<canvas id=c width=260 height=120><\/canvas><div id=app><\/div>');\n (async function(){try{await new (Object.getPrototypeOf(async function(){}).constructor)(code)()}catch(e){log('error: '+e.message+'\\n(This sample is a fragment. Edit it so every name it uses exists, then press Run.)')}})();\n}\n})();\n";
+    const LIVE_CSP = "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' blob:; style-src 'unsafe-inline'; img-src data: blob:; media-src data: blob:; font-src data:; connect-src data: blob:; worker-src blob:; form-action 'none'";
+    const liveDoc = (d) => '<!doctype html><meta charset="utf-8"><style>' + LIVE_CSS + (d.css || '') + '</style>' + d.html + '<script>' + LIVE_JS + d.js.replace(/<\/script/gi, '<\\/script') + '<\/script>';
+    const genDoc = (code) => '<!doctype html><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="' + LIVE_CSP + '"><style>' + LIVE_CSS + '</style><body><script>window.CODE=' + JSON.stringify(code).replace(/</g, '\\u003c') + ';' + LIVE_JS + LIVE_GEN + '<\/script>';
+    const liveLabel = (id) => LIVE[id] ? '▶ Run live demo' : '▶ Try it live (editable)';
+    document.getElementById('cards-area').addEventListener('click', (e) => {
+      const b = e.target.closest('.live-btn'); if (!b) return;
+      const id = b.dataset.live, box = b.nextElementSibling, open = box.hidden; box.hidden = !open; box.replaceChildren();
+      b.textContent = open ? '■ Close demo' : liveLabel(id); b.setAttribute('aria-expanded', String(open));
+      if (!open) return;
+      const d = LIVE[id];
+      if (d) {
+        for (let i = 0; i < (d.n || 1); i++) {
+          const f = document.createElement('iframe'); f.title = 'Live demo ' + (i + 1) + ' for ' + id;
+          f.setAttribute('sandbox', 'allow-scripts allow-same-origin'); f.style.height = d.h + 'px'; f.srcdoc = liveDoc(d); box.append(f);
+        }
+        return;
+      }
+      let src = ''; CATEGORIES.forEach((c) => c.cards.forEach((k) => { if (k.id === id) src = k.code; }));
+      const ed = document.createElement('div'), ta = document.createElement('textarea'), bar = document.createElement('div'),
+            run = document.createElement('button'), rs = document.createElement('button'), f = document.createElement('iframe');
+      ed.className = 'live-ed'; bar.className = 'live-bar'; ta.value = src; ta.spellcheck = false;
+      ta.setAttribute('aria-label', 'Editable code for ' + id + '. Press Run to apply.');
+      run.textContent = '▶ Run'; rs.textContent = 'Reset code'; run.className = rs.className = 'live-run';
+      f.title = 'Live preview for ' + id; f.setAttribute('sandbox', 'allow-scripts allow-forms'); f.style.height = '260px';
+      const go = () => { f.srcdoc = genDoc(ta.value); }; run.onclick = go; rs.onclick = () => { ta.value = src; go(); };
+      bar.append(run, rs); ed.append(ta, bar, f); box.append(ed); go();
+    });
+
+    // ─────────────────────────────────────────────
+    // DATA: All features are defined here.
+    // To add a new feature: copy a card object,
+    // give it a unique id, and push it to a category.
+    // ─────────────────────────────────────────────
+    const CATEGORIES = [
+      {
+        id: 'html-semantic',
+        icon: '🏗',
+        title: 'HTML Semantics & Structure',
+        filter: 'html',
+        desc: 'Semantic HTML tells browsers and screen readers what your content *means*, not just how it looks. AI can automatically pick the right element for every job — improving SEO, accessibility, and maintainability in one move.',
+        cards: [
+          { id:'h1', name:'Semantic Elements', level:'beginner', desc:'Use <header>, <main>, <article>, <section>, <aside>, <nav>, <footer>, <figure>, <figcaption> instead of generic <div> tags. Search engines and screen readers use these to understand page structure.', code:`<header>\n  <nav aria-label="Main navigation">\n    <ul>…</ul>\n  </nav>\n</header>\n<main>\n  <article>\n    <h1>Post Title</h1>\n    <p>Content…</p>\n  </article>\n  <aside>Related links…</aside>\n</main>\n<footer>© 2025</footer>`, tags:['html5','seo','a11y'] },
+          { id:'h2', name:'Document Outline (headings)', level:'beginner', desc:'Use h1–h6 in strict hierarchical order. Never skip levels. One h1 per page. AI can auto-generate a logical heading tree from your content outline.', code:`<h1>Page Title</h1>\n  <h2>Major Section</h2>\n    <h3>Subsection</h3>\n    <h3>Another Subsection</h3>\n  <h2>Second Major Section</h2>`, tags:['html','seo','a11y'] },
+          { id:'h3', name:'Meta Tags (SEO + Social)', level:'beginner', desc:'<meta> tags in <head> control how your page appears in search results and when shared on social media (Open Graph + Twitter Cards). AI can generate a full meta block from just your title and description.', code:`<meta name="description" content="…" />\n<meta property="og:title" content="…" />\n<meta property="og:image" content="…" />\n<meta name="twitter:card" content="summary_large_image" />`, tags:['html','seo','social'] },
+          { id:'h4', name:'Landmark Roles & ARIA', level:'intermediate', desc:'ARIA (Accessible Rich Internet Applications) attributes add meaning to elements that lack built-in semantics — like custom widgets, modals, and live regions. AI can add a full ARIA attribute set to any component.', code:`<div role="dialog" aria-modal="true" aria-labelledby="dialog-title">\n  <h2 id="dialog-title">Confirm Action</h2>\n  <button aria-label="Close dialog">×</button>\n</div>\n<div aria-live="polite" aria-atomic="true">\n  <\!-- status messages go here -->\n</div>`, tags:['a11y','aria','html'] },
+          { id:'h5', name:'Picture / Responsive Images', level:'beginner', desc:'The <picture> element serves different image files based on screen size, resolution, or format support (WebP, AVIF). AI can generate a full picture element with fallbacks from a single image path.', code:`<picture>\n  <source srcset="hero.avif" type="image/avif" />\n  <source srcset="hero.webp" type="image/webp" />\n  <source media="(max-width:600px)" srcset="hero-sm.jpg" />\n  <img src="hero.jpg" alt="…" loading="lazy" decoding="async" />\n</picture>`, tags:['html','images','performance'] },
+          { id:'h6', name:'Details / Summary (Accordion)', level:'beginner', desc:'The native HTML <details> and <summary> elements create collapsible accordions with zero JavaScript. Often overlooked — AI should always prefer this over JS-powered alternatives for simple FAQs.', code:`<details>\n  <summary>What is the refund policy?</summary>\n  <p>Full refund within 30 days…</p>\n</details>`, tags:['html','interactive','a11y'] },
+          { id:'h7', name:'Dialog Element', level:'intermediate', desc:'The native <dialog> element provides a proper accessible modal/popup. It traps focus, responds to Escape, and works with screen readers — far better than a DIV pretending to be a modal.', code:`<dialog id="myModal" aria-labelledby="modal-title">\n  <h2 id="modal-title">Hello!</h2>\n  <button onclick="myModal.close()">Close</button>\n</dialog>\n<button onclick="myModal.showModal()">Open</button>`, tags:['html5','a11y','interactive'] },
+          { id:'h8', name:'Template & Slot Elements', level:'intermediate', desc:'<template> holds inert HTML fragments that can be cloned with JS. Combined with <slot> in Web Components, they enable powerful component systems without any framework.', code:`<template id="card-tmpl">\n  <div class="card">\n    <h3 class="card-title"></h3>\n    <p class="card-body"></p>\n  </div>\n</template>\n\n<script>\n  const tmpl = document.getElementById('card-tmpl');\n  const clone = tmpl.content.cloneNode(true);\n  clone.querySelector('.card-title').textContent = 'Hello';\n  document.body.appendChild(clone);\n<\/script>`, tags:['html','web-components','js'] },
+          { id:'h9', name:'Form Validation (Native)', level:'beginner', desc:'HTML5 native form validation with attributes like required, pattern, minlength, type="email". No JavaScript needed for basic validation — AI should always add these attributes as a foundation.', code:`<form novalidate>\n  <input type="email" required placeholder="your@email.com" />\n  <input type="tel" pattern="[0-9]{10}" title="10 digit phone" />\n  <input type="url" />\n  <input type="number" min="1" max="100" step="1" />\n  <button type="submit">Submit</button>\n</form>`, tags:['html','forms','ux'] },
+          { id:'h10', name:'Datalist (Autocomplete)', level:'beginner', desc:'<datalist> provides a native browser autocomplete dropdown for text inputs with zero JS. AI can generate the option list from any data source.', code:`<input list="fruits" id="fruit-input" />\n<datalist id="fruits">\n  <option value="Apple" />\n  <option value="Banana" />\n  <option value="Mango" />\n</datalist>`, tags:['html','forms','ux'] },
+          { id:'h11', name:'Loading & Decoding Attributes', level:'beginner', desc:'loading="lazy" defers images/iframes until they near the viewport. decoding="async" lets the browser decode images off the main thread. fetchpriority="high" for LCP images. Add all three with a single AI prompt.', code:`<img\n  src="photo.jpg"\n  alt="…"\n  loading="lazy"\n  decoding="async"\n  fetchpriority="auto"\n/>`, tags:['performance','html','images'] },
+          { id:'h12', name:'Microdata / JSON-LD (Schema.org)', level:'intermediate', desc:'Structured data helps Google understand your content and show rich results (stars, FAQs, recipes, events). AI can generate the correct JSON-LD schema for any content type automatically.', code:`<script type="application/ld+json">\n{\n  "@context": "https://schema.org",\n  "@type": "Article",\n  "headline": "Page Title",\n  "author": {"@type": "Person", "name": "Author"},\n  "datePublished": "2025-01-01"\n}\n<\/script>`, tags:['seo','html','structured-data'] },
+        ]
+      },
+      {
+        id: 'css-layout',
+        icon: '🎨',
+        title: 'CSS Layout & Visual Systems',
+        filter: 'css',
+        desc: 'Modern CSS has replaced the need for most layout frameworks. These features give AI the vocabulary to build any layout — from simple cards to complex editorial magazines — without a single external stylesheet.',
+        cards: [
+          { id:'c1', name:'CSS Custom Properties (Variables)', level:'beginner', desc:'Define design tokens once and reuse everywhere. Changing a single --color-brand variable updates the whole page. AI can generate a complete design token system from a few color choices.', code:`:root {\n  --color-brand: #00ffc8;\n  --font-size-base: 1rem;\n  --spacing-md: 1.5rem;\n  --radius: 8px;\n}\n\n.button {\n  background: var(--color-brand);\n  padding: var(--spacing-md);\n  border-radius: var(--radius);\n}`, tags:['css','design-tokens','theming'] },
+          { id:'c2', name:'CSS Grid', level:'beginner', desc:'The most powerful 2D layout system in CSS. Cards, dashboards, magazine layouts, image galleries — describe any layout in plain English and AI can write the grid in seconds.', code:`.dashboard {\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));\n  grid-template-areas:\n    "header header header"\n    "sidebar main main"\n    "footer footer footer";\n  gap: 1.5rem;\n}`, tags:['css','layout','grid'] },
+          { id:'c3', name:'CSS Flexbox', level:'beginner', desc:'1D layout that handles rows or columns. Perfect for navigation bars, centering content, equal-height cards, and responsive toolbars. The bread-and-butter of modern layout.', code:`.navbar {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 1rem;\n}\n\n/* vertical centering */\n.hero {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  min-height: 100vh;\n}`, tags:['css','layout','flex'] },
+          { id:'c4', name:'Container Queries', level:'intermediate', desc:`Unlike media queries (based on viewport width), container queries respond to the *parent element's* size. This makes truly reusable components. AI can write components that adapt to their own container, not the screen.`, code:`/* Register a container */\n.card-wrapper {\n  container-type: inline-size;\n  container-name: card;\n}\n\n/* Style based on container width */\n@container card (min-width: 400px) {\n  .card { display: grid; grid-template-columns: 1fr 2fr; }\n}`, tags:['css','responsive','advanced'] },
+          { id:'c5', name:'Cascade Layers (@layer)', level:'intermediate', desc:'Organise CSS specificity without hacks. Define layers in priority order (reset, base, theme, components, utilities) and AI will never produce specificity conflicts, even in large projects.', code:`@layer reset, base, components, utilities;\n\n@layer reset {\n  * { margin: 0; padding: 0; box-sizing: border-box; }\n}\n@layer components {\n  .button { background: blue; padding: 0.5rem; }\n}\n@layer utilities {\n  .mt-4 { margin-top: 1rem; }\n}`, tags:['css','architecture','advanced'] },
+          { id:'c6', name:'Fluid Typography (clamp)', level:'beginner', desc:'clamp(min, preferred, max) creates type that scales fluidly between breakpoints — no media queries needed. AI can replace all your font-size breakpoints with a single clamp() line.', code:`/* Font scales from 1.2rem to 2.5rem based on viewport */\nh1 {\n  font-size: clamp(1.2rem, 4vw + 1rem, 2.5rem);\n}\n\n/* Padding that never goes below 1rem or above 4rem */\n.section {\n  padding: clamp(1rem, 5vw, 4rem);\n}`, tags:['css','typography','responsive'] },
+          { id:'c7', name:'CSS Animations & Keyframes', level:'beginner', desc:'Pure CSS animations for entrances, pulsing indicators, loading spinners, hover effects, and decorative motion — no JS needed. AI can generate complete @keyframes blocks from a plain description.', code:`@keyframes float {\n  0%, 100% { transform: translateY(0); }\n  50%       { transform: translateY(-12px); }\n}\n\n.floating-icon {\n  animation: float 3s ease-in-out infinite;\n}\n\n/* Stagger children with animation-delay */\n.card:nth-child(2) { animation-delay: 0.1s; }\n.card:nth-child(3) { animation-delay: 0.2s; }`, tags:['css','animation','motion'] },
+          { id:'c8', name:'CSS Transitions', level:'beginner', desc:'Smooth property changes on hover, focus, or class changes. Always specify duration, timing-function, and property. AI should add transitions to every interactive element automatically.', code:`.button {\n  background: #333;\n  transform: scale(1);\n  /* Transition: what, how long, how it eases */\n  transition:\n    background 0.25s ease,\n    transform  0.2s cubic-bezier(0.34,1.56,0.64,1),\n    box-shadow 0.25s ease;\n}\n.button:hover {\n  background: #00ffc8;\n  transform: scale(1.04);\n  box-shadow: 0 8px 24px rgba(0,255,200,0.4);\n}`, tags:['css','animation','ux'] },
+          { id:'c9', name:'Backdrop Filter (Glassmorphism)', level:'intermediate', desc:'Apply blur, brightness, or saturation to whatever is *behind* an element. Creates the "frosted glass" effect seen in macOS, iOS, and modern UIs. AI pairs it with semi-transparent backgrounds.', code:`.glass-card {\n  background: rgba(255, 255, 255, 0.08);\n  backdrop-filter: blur(20px) saturate(1.5);\n  -webkit-backdrop-filter: blur(20px) saturate(1.5);\n  border: 1px solid rgba(255,255,255,0.12);\n  border-radius: 16px;\n}`, tags:['css','visual-effects','advanced'] },
+          { id:'c10', name:'CSS Filters', level:'beginner', desc:'Apply photographic filters to any HTML element: blur, brightness, contrast, grayscale, hue-rotate, saturate, sepia, drop-shadow. AI can generate filter stacks that replicate Instagram filter styles.', code:`.image-vintage {\n  filter: sepia(0.6) contrast(1.1) brightness(0.95);\n}\n\n/* Interactive filter on hover */\n.image-card img {\n  filter: grayscale(0.8) brightness(0.9);\n  transition: filter 0.4s ease;\n}\n.image-card:hover img { filter: none; }`, tags:['css','images','visual-effects'] },
+          { id:'c11', name:'Clip-path & Masking', level:'intermediate', desc:'Clip-path crops elements into any shape — polygons, circles, ellipses, or SVG paths — enabling non-rectangular layouts without images. AI can generate clip-path values from simple shape descriptions.', code:`.hero {\n  clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);\n}\n\n.avatar {\n  clip-path: circle(50%);\n}\n\n.diamond {\n  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);\n}`, tags:['css','shapes','visual-effects'] },
+          { id:'c12', name:'CSS Scroll Snap', level:'intermediate', desc:'Force scrolling to "snap" to specific points — great for carousels, full-screen sections, and galleries. Pure CSS, no JS library needed. AI can turn any list of items into a snap-scroll carousel.', code:`.carousel {\n  display: flex;\n  overflow-x: auto;\n  scroll-snap-type: x mandatory;\n  gap: 1rem;\n}\n\n.carousel-item {\n  flex: 0 0 80%;\n  scroll-snap-align: start;\n  scroll-margin-left: 1rem;\n}`, tags:['css','scroll','interactive'] },
+          { id:'c13', name:'Custom Scrollbar Styling', level:'beginner', desc:'Style the browser scrollbar to match your brand with ::-webkit-scrollbar pseudoelements (Chromium/Safari). Also use scrollbar-width and scrollbar-color for Firefox.', code:`/* Chrome/Edge/Safari */\n::-webkit-scrollbar { width: 6px; }\n::-webkit-scrollbar-track { background: #0a0a0a; }\n::-webkit-scrollbar-thumb {\n  background: #00ffc8;\n  border-radius: 3px;\n}\n\n/* Firefox */\n* {\n  scrollbar-width: thin;\n  scrollbar-color: #00ffc8 #0a0a0a;\n}`, tags:['css','ux','visual'] },
+          { id:'c14', name:'CSS Grid Subgrid', level:'advanced', desc:'Subgrid lets nested grid elements align to the parent grid\'s tracks — solving the long-standing problem of aligning content in sibling cards (like matching card footers to the same baseline).', code:`.parent {\n  display: grid;\n  grid-template-rows: auto 1fr auto;\n  gap: 1rem;\n}\n\n/* child adopts parent\'s row tracks */\n.child {\n  grid-row: span 3;\n  display: grid;\n  grid-template-rows: subgrid;\n}`, tags:['css','grid','advanced'] },
+          { id:'c15', name:'@property (Typed CSS Variables)', level:'advanced', desc:'Register CSS custom properties with a type, initial value, and inheritance flag. This unlocks animating gradients and complex values that were previously impossible with CSS transitions.', code:`/* Register a typed property so we can animate it */\n@property --gradient-angle {\n  syntax: "<angle>";\n  initial-value: 0deg;\n  inherits: false;\n}\n\n.card {\n  background: conic-gradient(from var(--gradient-angle), #00ffc8, #7b61ff);\n  animation: rotate-gradient 4s linear infinite;\n}\n\n@keyframes rotate-gradient {\n  to { --gradient-angle: 360deg; }\n}`, tags:['css','animation','advanced'] },
+          { id:'c16', name:'CSS Logical Properties', level:'intermediate', desc:'Use margin-inline-start instead of margin-left. These properties adapt automatically to right-to-left (RTL) languages and vertical writing modes — essential for international apps.', code:`.card {\n  /* Works in LTR and RTL layouts */\n  margin-inline: auto;\n  padding-block: 1.5rem;\n  border-inline-start: 3px solid var(--color-brand);\n  inset-inline-start: 0;  /* instead of left: 0 */\n}`, tags:['css','i18n','accessibility'] },
+          { id:'c17', name:'View Transitions API (CSS)', level:'advanced', desc:'Animate between two states of a page — or between pages — with a single CSS declaration and JS hook. Creates cinematic page transitions with no third-party library.', code:`/* CSS: name the element that transitions */\n.hero-image {\n  view-transition-name: hero-img;\n}\n\n/* JS: wrap navigation in startViewTransition */\ndocument.startViewTransition(() => {\n  updateDOMContent();\n});`, tags:['css','animation','advanced','navigation'] },
+          { id:'c18', name:'Scroll-driven Animations', level:'advanced', desc:'Animate elements based on scroll position — no JS scroll listeners needed. @scroll-timeline and animation-timeline give CSS full control over parallax, progress bars, and reveal effects.', code:`.progress-bar {\n  animation: grow linear;\n  animation-timeline: scroll();\n  animation-range: 0% 100%;\n}\n\n@keyframes grow {\n  from { width: 0%; }\n  to   { width: 100%; }\n}`, tags:['css','scroll','animation','advanced'] },
+          { id:'c19', name:'has(), is(), where() Selectors', level:'intermediate', desc:'Next-generation CSS selectors. :has() is the "parent selector" CSS never had. :is() and :where() reduce repetition. AI can use these to write dramatically shorter, more maintainable CSS.', code:`/* Style a card differently if it contains an image */\n.card:has(img) { display: grid; grid-template-columns: 1fr 2fr; }\n\n/* Target multiple states concisely */\n:is(h1, h2, h3) { font-family: serif; }\n\n/* Form fields in any state */\ninput:is(:focus, :valid) { border-color: green; }`, tags:['css','selectors','modern'] },
+          { id:'c20', name:'Dark Mode (prefers-color-scheme)', level:'beginner', desc:'Detect the user\'s OS dark/light preference and adapt the page automatically. AI should always generate a dark mode variant for any page — it\'s standard practice in 2025.', code:`/* Light mode is the default */\n:root { --bg: #ffffff; --text: #111111; }\n\n/* Auto-switch when OS prefers dark */\n@media (prefers-color-scheme: dark) {\n  :root { --bg: #111111; --text: #f0f0f0; }\n}\n\nbody { background: var(--bg); color: var(--text); }`, tags:['css','theming','a11y'] },
+        ]
+      },
+      {
+        id: 'js-dom',
+        icon: '⚡',
+        title: 'JavaScript DOM & Interactivity',
+        filter: 'javascript',
+        desc: 'These are the JavaScript features AI reaches for when bringing static pages to life. From smooth animations to real-time updates, each one adds meaningful interactivity without requiring a framework.',
+        cards: [
+          { id:'j1', name:'Intersection Observer', level:'intermediate', desc:'Fires a callback when an element enters or leaves the viewport — without any scroll event listeners. Perfect for lazy loading, scroll animations, and "sticky becomes fixed" transitions. AI uses this constantly.', code:`const observer = new IntersectionObserver(\n  (entries) => {\n    entries.forEach(e => {\n      if (e.isIntersecting) {\n        e.target.classList.add('visible');\n        observer.unobserve(e.target); // run once\n      }\n    });\n  },\n  { threshold: 0.15 } // trigger at 15% visible\n);\n\ndocument.querySelectorAll('.fade-in')\n  .forEach(el => observer.observe(el));`, tags:['js','performance','animation'] },
+          { id:'j2', name:'ResizeObserver', level:'intermediate', desc:'Watch an element for size changes (not just the window). Essential for responsive charts, canvas redraws, and container-aware components. AI uses this to build layouts that react to their own container.', code:`const ro = new ResizeObserver(entries => {\n  for (const entry of entries) {\n    const { width, height } = entry.contentRect;\n    console.log('New size:', width, height);\n    redrawCanvas(width, height);\n  }\n});\n\nro.observe(document.getElementById('chart'));`, tags:['js','layout','responsive'] },
+          { id:'j3', name:'MutationObserver', level:'advanced', desc:'Watch the DOM for changes — new nodes, attribute changes, text changes. Useful for building a11y tools, CMS live-preview, and reacting to third-party DOM modifications.', code:`const mo = new MutationObserver((mutations) => {\n  mutations.forEach(m => {\n    if (m.type === 'childList') {\n      m.addedNodes.forEach(node => {\n        console.log('Node added:', node);\n      });\n    }\n  });\n});\n\nmo.observe(document.body, {\n  childList: true,\n  subtree: true,\n  attributes: true\n});`, tags:['js','dom','advanced'] },
+          { id:'j4', name:'requestAnimationFrame', level:'intermediate', desc:'The correct way to animate with JS. Syncs to the browser\'s repaint cycle (typically 60fps), preventing jank. AI should use this for all JS-driven animations instead of setInterval.', code:`let lastTime = 0;\n\nfunction animate(timestamp) {\n  const delta = timestamp - lastTime;\n  lastTime = timestamp;\n\n  // Update your animation state here\n  x += speed * (delta / 16); // frame-rate independent\n  element.style.transform = \`translateX(\${x}px)\`;\n\n  requestAnimationFrame(animate);\n}\n\nrequestAnimationFrame(animate);`, tags:['js','animation','performance'] },
+          { id:'j5', name:'Web Animations API (WAAPI)', level:'intermediate', desc:'Animate DOM elements with JS using the same model as CSS animations — but with programmatic control (pause, reverse, playback speed, events). No CSS class-toggling needed.', code:`const el = document.querySelector('.hero');\n\nconst anim = el.animate(\n  [\n    { opacity: 0, transform: 'translateY(30px)' },\n    { opacity: 1, transform: 'translateY(0)' }\n  ],\n  {\n    duration: 600,\n    easing: 'cubic-bezier(0.34,1.56,0.64,1)',\n    fill: 'forwards'\n  }\n);\n\nanim.onfinish = () => console.log('Done!');`, tags:['js','animation','waapi'] },
+          { id:'j6', name:'Fetch API (async/await)', level:'beginner', desc:'Modern replacement for XMLHttpRequest. Fetches data from APIs, JSON files, or any URL. AI wraps this in try/catch automatically and handles common patterns like loading states and error messages.', code:`async function getData(url) {\n  try {\n    const response = await fetch(url);\n    if (!response.ok) throw new Error(\`HTTP \${response.status}\`);\n    const data = await response.json();\n    return data;\n  } catch (err) {\n    console.error('Fetch failed:', err);\n    // Show user-friendly error state\n  }\n}\n\n// Usage:\nconst posts = await getData('/api/posts');`, tags:['js','network','async'] },
+          { id:'j7', name:'LocalStorage / SessionStorage', level:'beginner', desc:'Browser key/value storage. LocalStorage persists across browser restarts; SessionStorage clears when the tab closes. Perfect for saving user preferences, theme choice, or form drafts — no server needed.', code:`// Save user preference\nlocalStorage.setItem('theme', 'dark');\n\n// Read it back\nconst theme = localStorage.getItem('theme');\n\n// Remove a key\nlocalStorage.removeItem('theme');\n\n// Clear everything (only do this on explicit user request)\nlocalStorage.clear();\n\n// Parse/stringify for objects\nconst prefs = { font: 'large', color: 'teal' };\nlocalStorage.setItem('prefs', JSON.stringify(prefs));\nconst saved = JSON.parse(localStorage.getItem('prefs'));`, tags:['js','storage','offline'] },
+          { id:'j8', name:'IndexedDB', level:'advanced', desc:'A full client-side database supporting complex queries, indexes, and large data. Use for offline apps, saving user-generated content, or caching API responses. AI typically wraps this in a simple helper class.', code:`// Simplified example — use a library like\n// idb (https://github.com/jakearchibald/idb)\n// for a friendlier API in production.\n\nconst request = indexedDB.open('myDB', 1);\n\nrequest.onupgradeneeded = (e) => {\n  const db = e.target.result;\n  db.createObjectStore('notes', { keyPath: 'id' });\n};\n\nrequest.onsuccess = (e) => {\n  const db = e.target.result;\n  const tx = db.transaction('notes', 'readwrite');\n  tx.objectStore('notes').add({ id: 1, text: 'Hello' });\n};`, tags:['js','storage','offline','database'] },
+          { id:'j9', name:'Clipboard API', level:'beginner', desc:'Read and write the clipboard programmatically. AI uses this to implement "Copy to clipboard" buttons on code snippets, share links, and generated content — a near-universal UX pattern.', code:`async function copyToClipboard(text) {\n  try {\n    await navigator.clipboard.writeText(text);\n    // Show success feedback to user\n    showToast('Copied!');\n  } catch (err) {\n    console.error('Copy failed:', err);\n    // Fallback for older browsers:\n    const input = document.createElement('input');\n    input.value = text;\n    document.body.appendChild(input);\n    input.select();\n    document.execCommand('copy');\n    document.body.removeChild(input);\n  }\n}`, tags:['js','ux','utility'] },
+          { id:'j10', name:'Drag and Drop API', level:'intermediate', desc:'Native browser drag-and-drop. AI can implement file upload dropzones, sortable lists, and kanban-style boards using draggable attributes and the DragEvent API.', code:`const item = document.querySelector('.drag-item');\nconst zone = document.querySelector('.drop-zone');\n\nitem.draggable = true;\n\nitem.addEventListener('dragstart', e => {\n  e.dataTransfer.setData('text/plain', item.id);\n  item.classList.add('dragging');\n});\n\nzone.addEventListener('dragover', e => e.preventDefault());\n\nzone.addEventListener('drop', e => {\n  e.preventDefault();\n  const id = e.dataTransfer.getData('text/plain');\n  zone.appendChild(document.getElementById(id));\n});`, tags:['js','interactive','ux'] },
+          { id:'j11', name:'Custom Events', level:'intermediate', desc:'Create and dispatch your own events to decouple components. Instead of direct function calls between components, they communicate by emitting and listening to named events.', code:`// Dispatch a custom event from any element\nconst event = new CustomEvent('user:login', {\n  detail: { userId: 42, name: 'Alex' },\n  bubbles: true,\n  cancelable: true\n});\ndocument.dispatchEvent(event);\n\n// Listen anywhere in the document tree\ndocument.addEventListener('user:login', (e) => {\n  console.log('Logged in:', e.detail.name);\n  updateNavbar(e.detail);\n});`, tags:['js','architecture','events'] },
+          { id:'j12', name:'Proxy & Reflect (Reactive Data)', level:'advanced', desc:'JavaScript Proxy wraps an object and intercepts get/set operations — the foundation of Vue 3\'s reactivity system and many state management patterns. AI can use this to build simple reactive UI without a framework.', code:`// A reactive object that auto-updates the DOM\nfunction reactive(target, onUpdate) {\n  return new Proxy(target, {\n    set(obj, key, value) {\n      obj[key] = value;\n      onUpdate(key, value); // trigger re-render\n      return true;\n    }\n  });\n}\n\nconst state = reactive(\n  { count: 0 },\n  (key, val) => document.getElementById(key).textContent = val\n);`, tags:['js','advanced','state'] },
+        ]
+      },
+      {
+        id: 'web-apis',
+        icon: '🔌',
+        title: 'Browser Web APIs',
+        filter: 'apis',
+        desc: 'These are the powerful built-in browser capabilities that go far beyond the DOM. AI can tap into the device\'s camera, geolocation, sensors, notifications, and more — all with user permission.',
+        cards: [
+          { id:'a1', name:'Geolocation API', level:'beginner', desc:'Ask for the user\'s geographic coordinates. AI wraps this in a clean permission-flow with loading state, error handling for denied permission, and graceful fallbacks.', code:`navigator.geolocation.getCurrentPosition(\n  (pos) => {\n    const { latitude, longitude, accuracy } = pos.coords;\n    console.log(\`Lat: \${latitude}, Lon: \${longitude}\`);\n    // Use with Leaflet, Mapbox, or Google Maps\n  },\n  (err) => {\n    if (err.code === err.PERMISSION_DENIED)\n      showMessage('Location access denied.');\n  },\n  { enableHighAccuracy: true, timeout: 5000 }\n);`, tags:['api','location','permission'] },
+          { id:'a2', name:'Notifications API', level:'intermediate', desc:'Show native OS notifications even when the browser is minimised. Used for reminders, alerts, and background task completion. Always pair with a clear opt-in flow.', code:`async function notify(title, body) {\n  const permission = await Notification.requestPermission();\n  if (permission !== 'granted') return;\n\n  const n = new Notification(title, {\n    body,\n    icon: '/icon.png',\n    badge: '/badge.png',\n    tag: 'my-app', // replace previous notification\n  });\n\n  n.onclick = () => window.focus();\n}`, tags:['api','pwa','engagement'] },
+          { id:'a3', name:'MediaDevices API (Camera/Mic)', level:'intermediate', desc:'Access the device camera and microphone for video chat, photo capture, QR scanning, or voice input. AI generates the full getUserMedia flow including track management and stream cleanup.', code:`async function startCamera() {\n  try {\n    const stream = await navigator.mediaDevices.getUserMedia({\n      video: { facingMode: 'environment' }, // back camera\n      audio: false\n    });\n    document.getElementById('video').srcObject = stream;\n    return stream; // save to stop later!\n  } catch (err) {\n    console.error('Camera error:', err);\n  }\n}\n\n// Always stop tracks when done:\nstream.getTracks().forEach(t => t.stop());`, tags:['api','media','permission'] },
+          { id:'a4', name:'Screen Wake Lock API', level:'intermediate', desc:'Prevent the screen from sleeping — essential for recipes, navigation, slideshows, or exercise tracking where users need to see the screen hands-free.', code:`let wakeLock = null;\n\nasync function keepScreenOn() {\n  try {\n    wakeLock = await navigator.wakeLock.request('screen');\n    wakeLock.addEventListener('release', () => {\n      console.log('Wake lock released');\n    });\n  } catch (err) {\n    console.error(\`Wake lock error: \${err.message}\`);\n  }\n}\n\n// Release when no longer needed\nasync function releaseWakeLock() {\n  await wakeLock?.release();\n  wakeLock = null;\n}`, tags:['api','mobile','ux'] },
+          { id:'a5', name:'Vibration API', level:'beginner', desc:'Trigger haptic feedback on mobile devices. AI uses this for game actions, form validation feedback, success confirmations, and error alerts — adding a tactile layer to the experience.', code:`// Single buzz (200ms)\nnavigator.vibrate(200);\n\n// Pattern: vibrate 100ms, pause 100ms, vibrate 200ms\nnavigator.vibrate([100, 100, 200]);\n\n// Success pattern\nfunction successFeedback() {\n  navigator.vibrate([50, 30, 50]);\n}\n\n// Error pattern\nfunction errorFeedback() {\n  navigator.vibrate([200, 100, 200, 100, 200]);\n}`, tags:['api','mobile','haptics'] },
+          { id:'a6', name:'Web Speech API (TTS + STT)', level:'intermediate', desc:'Text-to-speech (SpeechSynthesis) and speech-to-text (SpeechRecognition) built into the browser. AI can add voice reading, voice search, and voice commands to any page.', code:`// Text-to-Speech\nconst utterance = new SpeechSynthesisUtterance('Hello, world!');\nutterance.lang = 'en-US';\nutterance.rate = 0.9; // slight slow-down for clarity\nwindow.speechSynthesis.speak(utterance);\n\n// Speech-to-Text\nconst recog = new (window.SpeechRecognition ||\n               window.webkitSpeechRecognition)();\nrecog.lang = 'en-US';\nrecog.onresult = e => {\n  const text = e.results[0][0].transcript;\n  console.log('Heard:', text);\n};\nrecog.start();`, tags:['api','a11y','voice','ai-ready'] },
+          { id:'a7', name:'Bluetooth / USB (Web HID)', level:'expert', desc:'Connect to Bluetooth devices, USB peripherals, and HID (keyboard/gamepad/sensor) devices directly from the browser. Opens doors for physical computing and IoT dashboards.', code:`// Web Bluetooth example\nasync function connectBluetooth() {\n  const device = await navigator.bluetooth.requestDevice({\n    filters: [{ services: ['heart_rate'] }]\n  });\n  const server = await device.gatt.connect();\n  const service = await server.getPrimaryService('heart_rate');\n  // … read characteristics\n}`, tags:['api','iot','hardware','expert'] },
+          { id:'a8', name:'Payment Request API', level:'intermediate', desc:'Trigger the browser\'s native payment sheet for credit cards, Apple Pay, Google Pay — without a payment SDK. AI can generate the full checkout flow from a cart data structure.', code:`const request = new PaymentRequest(\n  [{ supportedMethods: 'basic-card' }],\n  {\n    total: { label: 'Total', amount: { currency: 'USD', value: '9.99' } },\n    displayItems: [\n      { label: 'Item', amount: { currency: 'USD', value: '9.99' } }\n    ]\n  }\n);\n\nconst result = await request.show();\nawait result.complete('success');`, tags:['api','ecommerce','payments'] },
+          { id:'a9', name:'Share API (Web Share)', level:'beginner', desc:'Trigger the native OS share sheet on mobile — share to any installed app including WhatsApp, Email, Messages, and more. AI should add this to any content worth sharing.', code:`async function shareContent() {\n  if (!navigator.share) {\n    // Fallback: copy URL to clipboard\n    await navigator.clipboard.writeText(location.href);\n    return;\n  }\n  await navigator.share({\n    title: document.title,\n    text: 'Check this out!',\n    url: location.href,\n    // files: [fileObject] — can share files too!\n  });\n}`, tags:['api','mobile','social'] },
+          { id:'a10', name:'Broadcast Channel API', level:'advanced', desc:'Communicate between multiple tabs/windows of the same origin — without a server. AI uses this for real-time sync of shopping carts, auth state, and theme changes across all open tabs.', code:`// All tabs listen on the same channel\nconst channel = new BroadcastChannel('app-state');\n\n// Send a message to all other tabs\nchannel.postMessage({ type: 'THEME_CHANGED', value: 'dark' });\n\n// Receive messages from other tabs\nchannel.onmessage = (e) => {\n  if (e.data.type === 'THEME_CHANGED') {\n    applyTheme(e.data.value);\n  }\n};\n\n// Clean up when done\nchannel.close();`, tags:['api','communication','advanced'] },
+        ]
+      },
+      {
+        id: 'graphics',
+        icon: '🖼',
+        title: 'Graphics, Canvas & WebGL',
+        filter: 'graphics',
+        desc: 'For when you need more than CSS can offer — particle systems, data visualisations, 3D scenes, and image manipulation. AI can generate entire rendering systems from a single description.',
+        cards: [
+          { id:'g1', name:'Canvas 2D API', level:'intermediate', desc:'A pixel-level drawing surface. AI uses this for particle systems, generative art, custom charts, image filters, signature pads, and game engines. The backbone of most custom 2D graphics on the web.', code:`const canvas = document.getElementById('c');\nconst ctx = canvas.getContext('2d');\n\n// Resize to display pixels\ncanvas.width  = canvas.offsetWidth  * devicePixelRatio;\ncanvas.height = canvas.offsetHeight * devicePixelRatio;\nctx.scale(devicePixelRatio, devicePixelRatio);\n\n// Draw a glowing circle\nctx.shadowBlur = 30;\nctx.shadowColor = '#00ffc8';\nctx.fillStyle = '#00ffc8';\nctx.beginPath();\nctx.arc(100, 100, 40, 0, Math.PI * 2);\nctx.fill();`, tags:['graphics','canvas','visual'] },
+          { id:'g2', name:'SVG (Scalable Vector Graphics)', level:'beginner', desc:'Resolution-independent vector graphics — icons, logos, charts, animations, and complex illustrations that stay crisp at any size. SVGs can be styled with CSS and manipulated with JS.', code:`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">\n  <\!-- Animated circle that pulses -->\n  <circle cx="50" cy="50" r="30"\n    fill="none"\n    stroke="#00ffc8"\n    stroke-width="2">\n    <animate attributeName="r"\n      values="20;35;20"\n      dur="2s"\n      repeatCount="indefinite" />\n  </circle>\n  <\!-- Arrow icon -->\n  <path d="M30 50 L60 50 M50 40 L60 50 L50 60"\n    stroke="white" stroke-width="3"\n    fill="none" stroke-linecap="round" />\n</svg>`, tags:['graphics','svg','animation'] },
+          { id:'g3', name:'WebGL (Three.js)', level:'expert', desc:'GPU-accelerated 3D graphics in the browser via WebGL. Three.js is the standard wrapper library. AI can generate complete 3D scenes — geometry, materials, lighting, shadows, cameras — from a plain description.', code:`import * as THREE from 'three';\n\nconst scene    = new THREE.Scene();\nconst camera   = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, 0.1, 1000);\nconst renderer = new THREE.WebGLRenderer({ antialias: true });\nrenderer.setSize(innerWidth, innerHeight);\ndocument.body.appendChild(renderer.domElement);\n\nconst mesh = new THREE.Mesh(\n  new THREE.TorusKnotGeometry(1, 0.3),\n  new THREE.MeshStandardMaterial({ color: 0x00ffc8 })\n);\nscene.add(mesh);\nscene.add(new THREE.AmbientLight(0xffffff, 0.5));\ncamera.position.z = 5;\n\n(function animate() {\n  requestAnimationFrame(animate);\n  mesh.rotation.x += 0.01;\n  renderer.render(scene, camera);\n})();`, tags:['graphics','3d','webgl','advanced'] },
+          { id:'g4', name:'OffscreenCanvas', level:'advanced', desc:'Move Canvas rendering to a Web Worker — keeping the main thread free and the UI smooth. Essential for complex generative graphics, video processing, and real-time simulations.', code:`// main.js — transfer canvas to worker\nconst canvas = document.getElementById('c');\nconst offscreen = canvas.transferControlToOffscreen();\nconst worker = new Worker('renderer.js');\nworker.postMessage({ canvas: offscreen }, [offscreen]);\n\n// renderer.js (worker)\nself.onmessage = ({ data }) => {\n  const ctx = data.canvas.getContext('2d');\n  function draw() {\n    ctx.clearRect(0,0,9999,9999);\n    // all rendering here, off main thread\n    requestAnimationFrame(draw);\n  }\n  requestAnimationFrame(draw);\n};`, tags:['graphics','performance','workers'] },
+          { id:'g5', name:'CSS Paint Worklet (Houdini)', level:'expert', desc:'Register a custom CSS paint function that can be called like a background-image. You can paint procedural textures, patterns, and effects that respond to CSS variables — completely extending CSS.', code:`/* worklet.js */\nregisterPaint('halftone', class {\n  paint(ctx, size, props) {\n    const spacing = 20;\n    for (let x = 0; x < size.width; x += spacing) {\n      for (let y = 0; y < size.height; y += spacing) {\n        ctx.beginPath();\n        ctx.arc(x, y, spacing * 0.4, 0, Math.PI * 2);\n        ctx.fill();\n      }\n    }\n  }\n});\n\n/* main.js */\nCSS.paintWorklet.addModule('worklet.js');\n\n/* CSS */\n/* .el { background: paint(halftone); } */`, tags:['css','graphics','houdini','expert'] },
+        ]
+      },
+      {
+        id: 'pwa',
+        icon: '📱',
+        title: 'Progressive Web Apps (PWA)',
+        filter: 'pwa',
+        desc: 'PWAs blur the line between websites and native apps. These features let your site install on the home screen, work offline, send push notifications, and feel native — AI can scaffold a full PWA from any existing page.',
+        cards: [
+          { id:'p1', name:'Web App Manifest', level:'beginner', desc:'A JSON file that tells the browser how to present your site when installed as an app: name, icons, theme color, display mode, orientation, and start URL. AI generates the full manifest file.', code:`{\n  "name": "My App",\n  "short_name": "App",\n  "start_url": "/",\n  "display": "standalone",\n  "background_color": "#060810",\n  "theme_color": "#00ffc8",\n  "orientation": "portrait",\n  "icons": [\n    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },\n    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png",\n      "purpose": "any maskable" }\n  ]\n}`, tags:['pwa','manifest','installable'] },
+          { id:'p2', name:'Service Worker', level:'advanced', desc:'A background script that intercepts network requests, caches assets, and enables offline functionality. AI can generate a full service worker with cache-first and network-first strategies from a file list.', code:`// sw.js — install and cache assets\nconst CACHE = 'v1';\nconst ASSETS = ['/', '/index.html', '/app.css'];\n\nself.addEventListener('install', e => {\n  e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));\n});\n\nself.addEventListener('fetch', e => {\n  e.respondWith(\n    caches.match(e.request)\n      .then(hit => hit || fetch(e.request))\n  );\n});\n\n// Register in main JS:\nnavigator.serviceWorker.register('/sw.js');`, tags:['pwa','offline','service-worker'] },
+          { id:'p3', name:'Background Sync', level:'advanced', desc:'Queue failed network requests and automatically retry them when connectivity is restored — perfect for forms submitted offline, chat messages, and analytics pings.', code:`// Register a sync event\nnavigator.serviceWorker.ready.then(sw => {\n  sw.sync.register('sync-messages');\n});\n\n// In service worker: handle the sync\nself.addEventListener('sync', event => {\n  if (event.tag === 'sync-messages') {\n    event.waitUntil(syncQueuedMessages());\n  }\n});`, tags:['pwa','offline','sync'] },
+          { id:'p4', name:'Push Notifications', level:'advanced', desc:'Send notifications to users even when they\'re not on your site, using the Push API + Notifications API. Requires a server with a push service (web-push library). AI generates the full subscription flow.', code:`// Subscribe the user to push\nconst sub = await registration.pushManager.subscribe({\n  userVisibleOnly: true,\n  applicationServerKey: urlBase64ToUint8Array(PUBLIC_VAPID_KEY)\n});\n\n// Send subscription to your server\nawait fetch('/api/subscribe', {\n  method: 'POST',\n  body: JSON.stringify(sub)\n});\n\n// In SW: show the push notification\nself.addEventListener('push', e => {\n  const data = e.data.json();\n  self.registration.showNotification(data.title, data);\n});`, tags:['pwa','push','engagement'] },
+          { id:'p5', name:'App Install Prompt', level:'intermediate', desc:'Intercept the browser\'s install prompt and show it at the right moment — for example, after a user has engaged with your site for 30 seconds or completed a key action.', code:`let deferredPrompt;\n\nwindow.addEventListener('beforeinstallprompt', (e) => {\n  e.preventDefault(); // hold the prompt\n  deferredPrompt = e; // save it for later\n  showInstallBanner(); // show your custom UI\n});\n\nasync function installApp() {\n  deferredPrompt.prompt(); // show native dialog\n  const { outcome } = await deferredPrompt.userChoice;\n  if (outcome === 'accepted') trackInstall();\n  deferredPrompt = null;\n}`, tags:['pwa','installable','ux'] },
+        ]
+      },
+      {
+        id: 'a11y',
+        icon: '♿',
+        title: 'Accessibility (A11y)',
+        filter: 'a11y',
+        desc: 'The web belongs to everyone. These features ensure your pages work for people who use screen readers, keyboard navigation, voice control, and other assistive technologies. AI should apply all of these automatically — not as an afterthought.',
+        cards: [
+          { id:'ac1', name:'Focus Management', level:'beginner', desc:'Ensure every interactive element is reachable by Tab key. Use :focus-visible for visible focus rings. Manage focus in modals and single-page navigation. AI should audit and fix focus order automatically.', code:`/* Beautiful visible focus ring for keyboard users */\n:focus-visible {\n  outline: 2px solid var(--accent-1);\n  outline-offset: 3px;\n  border-radius: 4px;\n}\n\n/* Remove ugly outline for mouse users only */\n:focus:not(:focus-visible) { outline: none; }\n\n// JS: trap focus inside a modal\nfunction trapFocus(modal) {\n  const focusable = modal.querySelectorAll(\n    'button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])'\n  );\n  focusable[0].focus();\n}`, tags:['a11y','keyboard','ux'] },
+          { id:'ac2', name:'Screen Reader Text (sr-only)', level:'beginner', desc:'Visually hide text that is still read by screen readers. Add context that\'s obvious visually but invisible to blind users — like labeling icon-only buttons.', code:`/* The classic sr-only utility class */\n.sr-only {\n  position: absolute;\n  width: 1px;\n  height: 1px;\n  padding: 0;\n  margin: -1px;\n  overflow: hidden;\n  clip: rect(0,0,0,0);\n  white-space: nowrap;\n  border-width: 0;\n}\n\n<\!-- Icon button with hidden label -->\n<button>\n  <svg aria-hidden="true">…</svg>\n  <span class="sr-only">Open menu</span>\n</button>`, tags:['a11y','screen-reader','html'] },
+          { id:'ac3', name:'Skip Navigation Link', level:'beginner', desc:'A visually hidden link at the top of the page that lets keyboard users skip the navigation menu and jump straight to the main content. A legal requirement in many jurisdictions.', code:`<\!-- Put this as the very first element in <body> -->\n<a href="#main-content" class="skip-link">\n  Skip to main content\n</a>\n\n<style>\n.skip-link {\n  position: absolute;\n  top: -100px; left: 1rem;\n  background: #00ffc8; color: #000;\n  padding: 0.5rem 1rem;\n  border-radius: 4px;\n  z-index: 9999;\n  transition: top 0.2s;\n}\n.skip-link:focus { top: 1rem; }\n</style>`, tags:['a11y','keyboard','html'] },
+          { id:'ac4', name:'Live Regions (aria-live)', level:'intermediate', desc:'Announce dynamic content changes to screen readers — search results, loading states, error messages, and notifications. Without this, screen reader users miss async updates.', code:`<\!-- polite: read after user finishes current action -->\n<div aria-live="polite" aria-atomic="true">\n  <\!-- Content changes here are announced -->\n</div>\n\n<\!-- assertive: interrupt immediately (use sparingly) -->\n<div role="alert" aria-live="assertive">\n  <\!-- Errors and critical alerts -->\n</div>\n\n// Update the region:\ndocument.getElementById('status').textContent =\n  '5 results found.';`, tags:['a11y','aria','screen-reader'] },
+          { id:'ac5', name:'Reduced Motion Support', level:'beginner', desc:'Some users experience nausea or seizures from animations. Respect the OS prefers-reduced-motion setting by disabling or simplifying animations — AI should add this to every animated page.', code:`/* Disable all animations for users who prefer it */\n@media (prefers-reduced-motion: reduce) {\n  *, *::before, *::after {\n    animation-duration: 0.01ms !important;\n    animation-iteration-count: 1 !important;\n    transition-duration: 0.01ms !important;\n    scroll-behavior: auto !important;\n  }\n}\n\n// JS: check the preference\nconst prefersReduced =\n  matchMedia('(prefers-reduced-motion: reduce)').matches;`, tags:['a11y','animation','css'] },
+          { id:'ac6', name:'Color Contrast & High Contrast Mode', level:'beginner', desc:'WCAG requires 4.5:1 contrast for normal text, 3:1 for large text. Additionally, support Windows High Contrast Mode with the forced-colors media query.', code:`/* Support Windows Forced Colors (High Contrast) mode */\n@media (forced-colors: active) {\n  .button {\n    border: 2px solid ButtonText;\n    forced-color-adjust: none; /* preserve our colors */\n  }\n  .decorative-bg { display: none; }\n}\n\n/* prefers-contrast: more — user wants higher contrast */\n@media (prefers-contrast: more) {\n  :root { --text: #ffffff; --bg: #000000; }\n}`, tags:['a11y','css','color'] },
+        ]
+      },
+      {
+        id: 'performance',
+        icon: '🚀',
+        title: 'Performance & Loading',
+        filter: 'performance',
+        desc: 'A 1-second delay in load time causes a 7% drop in conversions. These features ensure your pages load fast, respond instantly, and use device resources efficiently. AI should apply the full performance suite by default.',
+        cards: [
+          { id:'pe1', name:'Resource Hints (preload, prefetch, preconnect)', level:'intermediate', desc:'Inform the browser about resources it will need so it can fetch them early. preload is for critical assets needed now; prefetch is for likely-next-page assets; preconnect warms up DNS + TLS connections.', code:`<\!-- Preload critical font — don't let it be render-blocking -->\n<link rel="preload" href="font.woff2" as="font" crossorigin />\n\n<\!-- Preload hero image -->\n<link rel="preload" href="hero.webp" as="image"\n  fetchpriority="high" />\n\n<\!-- Warm up API connection -->\n<link rel="preconnect" href="https://api.mysite.com" />\n\n<\!-- Prefetch next page the user will likely visit -->\n<link rel="prefetch" href="/dashboard.html" />`, tags:['performance','loading','html'] },
+          { id:'pe2', name:'Web Workers', level:'advanced', desc:'Run JavaScript on a background thread — keeping the UI perfectly smooth while doing heavy computation (JSON parsing, image processing, ML inference, sorting large arrays).', code:`// main.js — spawn a worker\nconst worker = new Worker('heavy-work.js');\n\nworker.postMessage({ data: bigArray });\n\nworker.onmessage = (e) => {\n  console.log('Result:', e.data.result);\n};\n\n// heavy-work.js (runs in background thread)\nself.onmessage = ({ data }) => {\n  // CPU-intensive work here won't freeze the UI\n  const result = data.data\n    .sort()\n    .map(x => x * 2)\n    .filter(x => x > 100);\n  self.postMessage({ result });\n};`, tags:['performance','workers','js'] },
+          { id:'pe3', name:'Dynamic Import (Code Splitting)', level:'intermediate', desc:'Load JavaScript modules on-demand — only when needed. Dramatically reduces initial bundle size for large apps. AI uses this to lazy-load heavy components like chart libraries, rich text editors, and maps.', code:`// Load a heavy module only when user clicks\nconst button = document.getElementById('open-chart');\n\nbutton.addEventListener('click', async () => {\n  // Module is only downloaded at this point\n  const { Chart } = await import('./chart-module.js');\n  new Chart(document.getElementById('canvas'), config);\n});`, tags:['performance','js','modules'] },
+          { id:'pe4', name:'requestIdleCallback', level:'advanced', desc:'Schedule non-urgent tasks during browser idle time — analytics, spell checking, prefetching — without impacting animation or interaction performance.', code:`// Run non-critical work when the browser is idle\nrequestIdleCallback((deadline) => {\n  while (deadline.timeRemaining() > 0 && tasks.length > 0) {\n    const task = tasks.shift();\n    task(); // process one task per idle slice\n  }\n\n  if (tasks.length > 0) {\n    // Re-schedule if there's more work left\n    requestIdleCallback(processQueue);\n  }\n}, { timeout: 2000 }); // max wait 2 seconds`, tags:['performance','js','scheduling'] },
+          { id:'pe5', name:'Performance Observer API', level:'advanced', desc:'Measure real user performance metrics: LCP, FID, CLS, TTFB, FCP. AI can instrument any page with a PerformanceObserver that logs Core Web Vitals to the console or your analytics endpoint.', code:`// Observe Core Web Vitals\nnew PerformanceObserver((list) => {\n  list.getEntries().forEach(entry => {\n    console.log(\`\${entry.name}: \${entry.startTime.toFixed(1)}ms\`);\n  });\n}).observe({ type: 'largest-contentful-paint', buffered: true });\n\nnew PerformanceObserver((list) => {\n  list.getEntries().forEach(e => {\n    console.log('Layout shift:', e.value);\n  });\n}).observe({ type: 'layout-shift', buffered: true });`, tags:['performance','metrics','monitoring'] },
+          { id:'pe6', name:'Content Visibility (CSS)', level:'intermediate', desc:'content-visibility: auto tells the browser to skip rendering off-screen elements entirely. Can improve initial render time by 50%+ on long-scrolling pages.', code:`/* Skip rendering off-screen sections entirely */\n.article-section {\n  content-visibility: auto;\n  /* Give browser a size hint to avoid layout shifts */\n  contain-intrinsic-size: 0 500px;\n}\n\n/* For individual items in a long list */\n.list-item {\n  content-visibility: auto;\n  contain-intrinsic-size: 80px;\n}`, tags:['performance','css','rendering'] },
+        ]
+      },
+      {
+        id: 'security',
+        icon: '🛡',
+        title: 'Security & Privacy',
+        filter: 'security',
+        desc: 'Security is non-negotiable. These features are the minimum baseline AI should apply to any production page — protecting your users from XSS, clickjacking, data leaks, and credential theft.',
+        cards: [
+          { id:'s1', name:'Content Security Policy (CSP)', level:'intermediate', desc:'A response header or meta tag that restricts what resources the page can load — blocking XSS attacks even if an attacker injects script tags. AI can generate a tight CSP from your asset list.', code:`<\!-- Meta tag approach (response header is preferred) -->\n<meta http-equiv="Content-Security-Policy"\n  content="\n    default-src 'self';\n    script-src 'self' 'nonce-RANDOM';\n    style-src 'self' fonts.googleapis.com;\n    font-src fonts.gstatic.com;\n    img-src 'self' data: https:;\n    connect-src 'self' api.mysite.com;\n    frame-ancestors 'none';\n  "\n/>`, tags:['security','csp','xss'] },
+          { id:'s2', name:'Subresource Integrity (SRI)', level:'intermediate', desc:'Add a cryptographic hash to <script> and <link> tags for third-party resources. If the CDN is compromised, the browser rejects the modified file — protecting against supply chain attacks.', code:`<\!-- Hash ensures this exact file is loaded -->\n<script\n  src="https://cdnjs.cloudflare.com/ajax/libs/lodash/4.17.21/lodash.min.js"\n  integrity="sha512-WFN04846sdKMIP5LKNphMaWzU7YpMyCU245etK3g/2ARYbPK9Ub18eG+ljU96qKRCWh+quCY7yefSmlkQw1ANQ=="\n  crossorigin="anonymous"\n>\n<\/script>`, tags:['security','sri','cdn'] },
+          { id:'s3', name:'Referrer Policy', level:'beginner', desc:'Control how much URL information is sent to other sites when users click links from your page. Protecting user privacy and preventing URL-leakage of sensitive query parameters.', code:`<\!-- Set globally in <head> -->\n<meta name="referrer" content="strict-origin-when-cross-origin" />\n\n<\!-- Or per-link for sensitive URLs -->\n<a href="https://other.com"\n   rel="noopener noreferrer"\n   referrerpolicy="no-referrer">\n  External link\n</a>`, tags:['security','privacy','html'] },
+          { id:'s4', name:'Sanitize User Input (DOMPurify)', level:'intermediate', desc:'Never insert user-generated content into the DOM with innerHTML without sanitizing first. DOMPurify strips dangerous HTML while preserving safe formatting. AI should always add this to any user input rendering.', code:`// Use DOMPurify to sanitize before inserting\nimport DOMPurify from 'dompurify';\n\nconst raw = '<img onerror=alert(1) src=x /><b>Hello</b>';\nconst clean = DOMPurify.sanitize(raw);\n// clean === '<b>Hello</b>' — attack removed!\n\ndiv.innerHTML = clean;\n\n// For text-only content, always use textContent:\nelement.textContent = userInput; // safe, no HTML parsed`, tags:['security','xss','js'] },
+          { id:'s5', name:'HTTPS Enforcement & HSTS', level:'intermediate', desc:'Strict-Transport-Security tells browsers to always use HTTPS for your domain — even if the user types http://. Prevent downgrade attacks and cookie theft over unsecured connections.', code:`<\!-- Server response header (not meta) -->\n<\!-- Strict-Transport-Security: max-age=31536000; includeSubDomains; preload -->\n\n<\!-- In HTML: upgrade insecure requests automatically -->\n<meta http-equiv="Content-Security-Policy"\n  content="upgrade-insecure-requests" />\n\n<\!-- Prevent your page from being embedded in iframes -->\n<meta http-equiv="X-Frame-Options" content="DENY" />`, tags:['security','https','headers'] },
+          { id:'s6', name:'Permissions Policy', level:'advanced', desc:'Explicitly declare which browser features your page uses (camera, microphone, geolocation, payment). This prevents third-party scripts from silently activating these capabilities.', code:`<\!-- Restrict which features this page can use -->\n<meta http-equiv="Permissions-Policy"\n  content="\n    camera=(),\n    microphone=(),\n    geolocation=(self),\n    payment=(self)\n  "\n/>\n<\!-- Empty () = feature disabled entirely -->\n<\!-- (self) = only this origin can use it -->`, tags:['security','privacy','permissions'] },
+        ]
+      },
+      {
+        id: 'ai-ready',
+        icon: '🤖',
+        title: 'AI-Ready Features',
+        filter: 'ai',
+        desc: 'These features and patterns are specifically powerful when combined with AI generation — they either make AI\'s job easier, enable AI capabilities in the browser, or represent patterns AI excels at generating automatically.',
+        cards: [
+          { id:'ai1', name:'Web Components (Custom Elements)', level:'advanced', desc:'Define your own reusable HTML elements — <my-button>, <product-card>, <data-chart> — with encapsulated logic and styling. AI can generate complete custom element definitions from a component description.', code:`class ProductCard extends HTMLElement {\n  static observedAttributes = ['title', 'price'];\n\n  connectedCallback() {\n    this.attachShadow({ mode: 'open' });\n    this.render();\n  }\n\n  render() {\n    this.shadowRoot.innerHTML = \`\n      <style>h3 { color: #00ffc8; }</style>\n      <div>\n        <h3>\${this.getAttribute('title')}</h3>\n        <p>\${this.getAttribute('price')}</p>\n      </div>\n    \`;\n  }\n}\n\ncustomElements.define('product-card', ProductCard);`, tags:['web-components','advanced','ai-ready'] },
+          { id:'ai2', name:'CSS @layer + Design Tokens for AI', level:'intermediate', desc:'Organise your CSS with named layers and semantic design tokens so that AI can safely modify one layer (e.g. theme) without breaking others. This is the ideal architecture for AI-maintained stylesheets.', code:`/* Layer order declared first — explicit priority */\n@layer tokens, reset, base, layout, components, utilities, theme;\n\n@layer tokens {\n  :root {\n    --color-surface: hsl(220 15% 10%);\n    --color-brand:   hsl(166 100% 50%);\n    --space-md:      1.5rem;\n  }\n}\n\n/* AI only edits the theme layer to restyle */\n@layer theme {\n  .button { background: var(--color-brand); }\n}`, tags:['css','architecture','ai-ready'] },
+          { id:'ai3', name:'JSON-LD + Schema.org (AI reads it too)', level:'intermediate', desc:'Structured data makes your content readable by search engines AND by AI agents (LLMs, crawlers). AI can generate complete schema markup from page content — and future AI agents will use it to understand your site.', code:`<script type="application/ld+json">\n{\n  "@context": "https://schema.org",\n  "@type": "FAQPage",\n  "mainEntity": [\n    {\n      "@type": "Question",\n      "name": "What is the refund policy?",\n      "acceptedAnswer": {\n        "@type": "Answer",\n        "text": "Full refund within 30 days."\n      }\n    }\n  ]\n}\n<\/script>`, tags:['seo','ai-ready','structured-data'] },
+          { id:'ai4', name:'WebLLM / Transformers.js (On-device AI)', level:'expert', desc:'Run large language models, image classifiers, sentiment analysis, and text embeddings directly in the browser — no API key, no server, complete privacy. AI can scaffold the full inference pipeline.', code:`// Transformers.js — on-device ML in the browser\nimport { pipeline } from '@xenova/transformers';\n\nconst classifier = await pipeline(\n  'sentiment-analysis',\n  'Xenova/distilbert-base-uncased-finetuned-sst-2-english'\n);\n\nconst result = await classifier('I love this website!');\nconsole.log(result);\n// [{label: 'POSITIVE', score: 0.9998}]`, tags:['ai','ml','on-device','expert'] },
+          { id:'ai5', name:'Prompt Templates in HTML Comments', level:'beginner', desc:'A low-tech but powerful pattern: embed AI prompt templates in HTML comments or data attributes. AI tools parsing the file know how to extend each section — making future AI edits faster and safer.', code:`<\!-- AI-SECTION: hero\n  To update: change .hero-title and .hero-subtitle.\n  Keep: particle canvas, scroll-cue, animation classes.\n  Tone: inspiring, technical, beginner-friendly.\n-->\n<section id="hero" data-ai-section="hero"\n  data-ai-purpose="emotional hook and navigation start">\n  …\n</section>`, tags:['ai-ready','html','architecture'] },
+          { id:'ai6', name:'EventSource / Server-Sent Events (SSE)', level:'intermediate', desc:'Real-time server-to-browser streaming over HTTP. Perfect for AI token streaming (like ChatGPT\'s typewriter effect), live feeds, and dashboards. Simpler than WebSockets for one-way data flows.', code:`// Connect to a streaming endpoint\nconst source = new EventSource('/api/stream');\n\nsource.onmessage = (e) => {\n  const token = JSON.parse(e.data);\n  // Append each token to the UI as it arrives\n  outputDiv.textContent += token.text;\n};\n\nsource.onerror = () => {\n  source.close();\n  console.log('Stream ended or errored');\n};\n\n// Server sends: data: {"text":"Hello"} followed by \\n\\n`, tags:['js','streaming','ai-ready','network'] },
+          { id:'ai7', name:'WebSocket (Bidirectional Realtime)', level:'intermediate', desc:'Full-duplex, low-latency communication between browser and server. Use for chat apps, multiplayer games, live collaborative editing, and AI agent interactions.', code:`const ws = new WebSocket('wss://api.mysite.com/socket');\n\nws.onopen    = ()  => ws.send(JSON.stringify({ type: 'JOIN' }));\nws.onmessage = (e) => {\n  const msg = JSON.parse(e.data);\n  if (msg.type === 'MESSAGE') appendMessage(msg);\n};\nws.onerror   = (e) => console.error('WS error:', e);\nws.onclose   = ()  => setTimeout(reconnect, 3000);`, tags:['js','realtime','websockets'] },
+          { id:'ai8', name:'CSS @starting-style (Enter Animations)', level:'advanced', desc:'Animate elements from their initial state when they first appear in the DOM — without any JavaScript class toggling. Perfect for dynamically inserted AI-generated content cards.', code:`/* Animate any element that enters the DOM */\n.card {\n  opacity: 1;\n  transform: scale(1);\n  transition: opacity 0.4s ease, transform 0.4s ease;\n}\n\n@starting-style {\n  .card {\n    opacity: 0;\n    transform: scale(0.9);\n  }\n}`, tags:['css','animation','advanced','ai-ready'] },
+        ]
+      },
+      {
+        id: 'web-components-ext',
+        icon: '🧩',
+        title: 'Web Components & Patterns',
+        filter: 'javascript',
+        desc: 'Reusable, framework-free component patterns. These are the building blocks AI uses to create maintainable, modular page architectures without locking you into any library.',
+        cards: [
+          { id:'wc1', name:'Shadow DOM', level:'advanced', desc:'Encapsulate a component\'s HTML and CSS so they can\'t be affected by (or affect) the rest of the page. The foundation of truly isolated, reusable web components.', code:`class TooltipEl extends HTMLElement {\n  connectedCallback() {\n    const shadow = this.attachShadow({ mode: 'open' });\n    shadow.innerHTML = \`\n      <style>\n        /* These styles are SCOPED — they don't leak out */\n        :host { position: relative; display: inline-block; }\n        .tip {\n          position: absolute; bottom: 100%;\n          background: #333; color: white;\n          padding: 4px 8px; border-radius: 4px;\n          white-space: nowrap;\n        }\n      </style>\n      <slot></slot>\n      <div class="tip">\${this.getAttribute('text')}</div>\n    \`;\n  }\n}\ncustomElements.define('my-tooltip', TooltipEl);`, tags:['web-components','shadow-dom','advanced'] },
+          { id:'wc2', name:'ES Modules (import/export)', level:'beginner', desc:'Split code into separate files with explicit imports and exports. No bundler required in modern browsers. AI generates clean module structures that are easy to understand and extend.', code:`// utils.js — named exports\nexport function formatDate(date) {\n  return new Intl.DateTimeFormat('en-US').format(date);\n}\nexport const PI = 3.14159;\n\n// component.js — import what you need\nimport { formatDate } from './utils.js';\n\n// index.html — native ES module\n<script type="module" src="./main.js"><\/script>`, tags:['js','modules','architecture'] },
+          { id:'wc3', name:'Intl API (Internationalisation)', level:'intermediate', desc:'Format numbers, dates, currencies, lists, and relative times according to any locale — without a library. AI uses Intl to make any page globally ready from day one.', code:`// Date formatting\nnew Intl.DateTimeFormat('fr-FR').format(new Date());\n// → '13/04/2025'\n\n// Currency\nnew Intl.NumberFormat('de-DE', {\n  style: 'currency', currency: 'EUR'\n}).format(1234.56);\n// → '1.234,56 €'\n\n// Relative time\nnew Intl.RelativeTimeFormat('en', { numeric: 'auto' })\n  .format(-2, 'day');\n// → 'the day before yesterday'\n\n// List formatting\nnew Intl.ListFormat('en').format(['a', 'b', 'c']);\n// → 'a, b, and c'`, tags:['js','i18n','utility'] },
+          { id:'wc4', name:'AbortController (Cancel Requests)', level:'intermediate', desc:'Cancel fetch requests, stop event listeners, or abort any async operation gracefully. Essential for typeahead search (cancel the previous request when the user keeps typing) and component unmounting.', code:`// Create a controller\nconst controller = new AbortController();\n\n// Pass signal to fetch\nfetch('/api/search?q=hello', {\n  signal: controller.signal\n}).catch(e => {\n  if (e.name === 'AbortError') return; // expected\n  throw e;\n});\n\n// Cancel the request 500ms later\nsetTimeout(() => controller.abort(), 500);\n\n// Also works with event listeners:\nconst opts = { signal: controller.signal };\ndocument.addEventListener('click', handler, opts);\n// Auto-removed when controller.abort() is called`, tags:['js','async','network','utility'] },
+          { id:'wc5', name:'CSS Nesting', level:'beginner', desc:'Native CSS nesting (like Sass/LESS) is now supported without any build tool. Write parent-child relationships in a readable, hierarchical way — reducing repetition and improving organisation.', code:`.card {\n  background: #1a2540;\n  border-radius: 12px;\n  padding: 1.5rem;\n\n  /* Nested — no build tool needed! */\n  .card-title {\n    font-size: 1.2rem;\n    color: #00ffc8;\n  }\n\n  &:hover {\n    background: #1f2d4e;\n    transform: translateY(-3px);\n  }\n\n  /* Media query inside the block */\n  @media (max-width: 600px) {\n    padding: 1rem;\n  }\n}`, tags:['css','modern','architecture'] },
+        ]
+      }
+    ];
+
+    // ─────────────────────────────────────────────
+    // AI PROMPT HELPER DATA
+    // Ready-made prompts for asking AI to implement features
+    // ─────────────────────────────────────────────
+    const PROMPTS = [
+      {
+        label: 'Full PWA Setup',
+        text: 'Add a full Progressive Web App setup to my index.html. Include a Web App Manifest (manifest.json), a Service Worker (sw.js) with cache-first strategy for static assets and network-first for API calls, an install prompt handler, and offline fallback page. Register the service worker in the HTML.'
+      },
+      {
+        label: 'Scroll Animation Suite',
+        text: 'Add smooth scroll-triggered reveal animations to my page. Use IntersectionObserver to add a .visible class when each .fade-in element enters the viewport. Include staggered animation delays for card grids. Respect prefers-reduced-motion by disabling animations for those users.'
+      },
+      {
+        label: 'Complete A11y Audit & Fix',
+        text: 'Audit and fix the accessibility of my HTML page. Add: a skip navigation link, :focus-visible styles, aria-labels to all icon buttons, aria-live regions for dynamic content, alt text to all images, semantic landmarks (header, main, footer, nav), and prefers-reduced-motion support.'
+      },
+      {
+        label: 'Dark Mode + Theming System',
+        text: 'Add a complete dark/light mode system to my page. Use CSS custom properties for all colors. Auto-detect the user\'s OS preference with prefers-color-scheme. Add a toggle button that saves the user\'s choice to localStorage. Animate the transition between themes.'
+      },
+      {
+        label: 'Canvas Particle Background',
+        text: 'Add a photorealistic bioluminescent particle network to my page background using HTML5 Canvas. Particles should drift gently, connect to nearby particles with lines, glow, and respond to mouse proximity (attraction/repulsion). Keep it performant with requestAnimationFrame.'
+      },
+      {
+        label: 'Performance Optimisation',
+        text: 'Optimise my HTML page for Core Web Vitals. Add: resource hints (preload, prefetch, preconnect), loading="lazy" and decoding="async" to images, content-visibility:auto to off-screen sections, a PerformanceObserver that logs LCP and CLS, and convert all large images to WebP/AVIF with picture elements.'
+      },
+      {
+        label: 'Security Hardening',
+        text: 'Harden my HTML page\'s security. Add: a Content Security Policy meta tag, Subresource Integrity hashes to all CDN scripts, rel="noopener noreferrer" to all external links, a Referrer-Policy meta tag, and X-Frame-Options DENY. Explain each addition in a comment.'
+      },
+      {
+        label: 'Search + Filter UI',
+        text: 'Add a live search and filter system to my card grid. Use a text input that filters cards by matching their title and description. Add category filter buttons as pills. Show a results count. Animate cards in/out with CSS transitions. No external libraries — pure vanilla JS.'
+      },
+      {
+        label: 'On-Device AI Features',
+        text: 'Add on-device AI to my page using the Transformers.js library. Include: a sentiment analyser for a comment input field, a text summariser for long article content, and a smart search that uses text embeddings for semantic similarity matching. All inference should run in a Web Worker to keep the UI smooth.'
+      },
+      {
+        label: 'Full Design Token System',
+        text: 'Refactor my CSS to use a complete design token system with CSS custom properties. Create tokens for: colors (background, surface, brand, text, border), typography (font families, sizes, weights, line heights), spacing (4px grid), border radius, shadows, and transitions. Use @layer for cascade management.'
+      },
+      {
+        label: 'Offline-First Form',
+        text: 'Make my contact form work offline. Queue submissions in IndexedDB when the user is offline. When connectivity is restored, use Background Sync in the Service Worker to automatically retry sending. Show the user a toast notification confirming when the queued submission was delivered.'
+      },
+      {
+        label: 'CSS Animations Showcase',
+        text: 'Add a suite of CSS animations to my page: a floating hero element, staggered card entrance animations, a gradient border effect using @property, a scroll-driven progress bar at the top of the page using animation-timeline: scroll(), and a view transition when navigating between sections.'
+      }
+    ];
+
+    // ─────────────────────────────────────────────
+    // RENDER: Build the DOM from data
+    // ─────────────────────────────────────────────
+    function render() {
+      const cardsArea = document.getElementById('cards-area');
+      const tocList = document.getElementById('toc-list');
+
+      CATEGORIES.forEach(cat => {
+        // TOC entry
+        const li = document.createElement('li');
+        li.innerHTML = `<a class="toc-link" href="#cat-${cat.id}" data-id="${cat.id}">
+          <span class="toc-dot"></span>${cat.title}
+        </a>`;
+        tocList.appendChild(li);
+
+        // Section
+        const section = document.createElement('section');
+        section.className = 'category-section';
+        section.id = `cat-${cat.id}`;
+        section.dataset.filter = cat.filter;
+
+        section.innerHTML = `
+          <div class="category-header">
+            <span class="category-icon" aria-hidden="true">${cat.icon}</span>
+            <h2 class="category-title">${cat.title}</h2>
+            <span class="category-count">${cat.cards.length} features</span>
+          </div>
+          <p class="category-desc">${escDesc(cat.desc)}</p>
+          <div class="cards-grid" id="grid-${cat.id}"></div>
+        `;
+
+        cardsArea.appendChild(section);
+
+        const grid = section.querySelector(`#grid-${cat.id}`);
+
+        cat.cards.forEach((card, i) => {
+          const el = document.createElement('article');
+          el.className = 'feature-card';
+          el.dataset.name = card.name.toLowerCase();
+          el.dataset.desc = card.desc.toLowerCase();
+          el.dataset.filter = cat.filter;
+          el.dataset.tags = card.tags.join(' ');
+          el.style.transitionDelay = `${i * 40}ms`;
+
+          const escapedCode = escapeHtml(card.code);
+
+          el.innerHTML = `
+            <div class="card-top">
+              <div class="card-name">${card.name}</div>
+              <span class="badge badge-${card.level}">${card.level}</span>
+            </div>
+            <p class="card-desc">${escDesc(card.desc)}</p>
+            <div class="code-block" id="code-${card.id}">
+              <code>${escapedCode}</code>
+              <button class="copy-btn" data-code="${escapedCode}" aria-label="Copy code snippet">copy</button>
+            </div>
+            <button class="expand-toggle" data-target="code-${card.id}">▼ expand code</button>
+            <button class="live-btn" data-live="${card.id}" aria-expanded="false">${LIVE[card.id] ? '▶ Run live demo' : '▶ Try it live (editable)'}</button><div class="live-box" hidden></div>
+            <div class="card-tags">
+              ${card.tags.map(t => `<span class="tag-chip">${t}</span>`).join('')}
+            </div>
+          `;
+
+          grid.appendChild(el);
+        });
+      });
+
+      // No-results message
+      const noResults = document.createElement('p');
+      noResults.id = 'no-results';
+      noResults.textContent = '😶 No features found matching your search. Try a different keyword.';
+      cardsArea.appendChild(noResults);
+
+      // Prompts
+      const promptsGrid = document.getElementById('prompts-grid');
+      PROMPTS.forEach((p, i) => {
+        const el = document.createElement('div');
+        el.className = 'prompt-card';
+        el.style.transitionDelay = `${i * 50}ms`;
+        el.innerHTML = `
+          <div class="prompt-label">${p.label}</div>
+          <div class="prompt-text" role="button" tabindex="0"
+            aria-label="Click to copy prompt: ${p.label}">
+            ${escapeHtml(p.text)}
+          </div>
+        `;
+        promptsGrid.appendChild(el);
+      });
+
+      updateCount();
+    }
+
+    // ─────────────────────────────────────────────
+    // SEARCH & FILTER
+    // ─────────────────────────────────────────────
+    let activeFilter = 'all';
+    let searchQuery = '';
+
+    function applyFilters() {
+      const cards = document.querySelectorAll('.feature-card');
+      const sections = document.querySelectorAll('.category-section');
+      let visible = 0;
+
+      cards.forEach(card => {
+        const matchesFilter = activeFilter === 'all' || card.dataset.filter === activeFilter;
+        const matchesSearch =
+          !searchQuery ||
+          card.dataset.name.includes(searchQuery) ||
+          card.dataset.desc.includes(searchQuery) ||
+          card.dataset.tags.includes(searchQuery);
+
+        if (matchesFilter && matchesSearch) {
+          card.classList.remove('hidden');
+          visible++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      // Hide empty sections
+      sections.forEach(sec => {
+        const hasVisible = sec.querySelectorAll('.feature-card:not(.hidden)').length > 0;
+        sec.style.display = hasVisible ? '' : 'none';
+      });
+
+      document.getElementById('no-results').style.display = visible === 0 ? 'block' : 'none';
+      updateCount(visible);
+    }
+
+    function updateCount(n) {
+      const total = document.querySelectorAll('.feature-card').length;
+      const count = n !== undefined ? n : total;
+      document.getElementById('results-count').textContent =
+        `${count} / ${total} features`;
+      document.getElementById('total-features').textContent = `${total}+`;
+    }
+
+    // Search input
+    document.getElementById('search-input').addEventListener('input', e => {
+      searchQuery = e.target.value.toLowerCase().trim();
+      applyFilters();
+    });
+
+    // Filter pills
+    document.querySelectorAll('.pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        activeFilter = pill.dataset.filter;
+        applyFilters();
+      });
+    });
+
+    // ─────────────────────────────────────────────
+    // COPY TO CLIPBOARD (Feature #1: Clipboard API)
+    // ─────────────────────────────────────────────
+    document.addEventListener('click', async e => {
+      // Feature card copy button
+      if (e.target.classList.contains('copy-btn')) {
+        const code = unescapeHtml(e.target.dataset.code);
+        try {
+          await navigator.clipboard.writeText(code);
+          e.target.textContent = '✓ copied';
+          e.target.classList.add('copied');
+          setTimeout(() => {
+            e.target.textContent = 'copy';
+            e.target.classList.remove('copied');
+          }, 2000);
+        } catch {
+          e.target.textContent = 'failed';
+        }
+      }
+
+      // Expand/collapse code blocks
+      if (e.target.classList.contains('expand-toggle')) {
+        const targetId = e.target.dataset.target;
+        const block = document.getElementById(targetId);
+        block.classList.toggle('expanded');
+        e.target.textContent = block.classList.contains('expanded')
+          ? '▲ collapse code' : '▼ expand code';
+      }
+
+      // Prompt copy
+      if (e.target.classList.contains('prompt-text')) {
+        const text = e.target.textContent.trim();
+        await navigator.clipboard.writeText(text).catch(() => {});
+        const orig = e.target.textContent;
+        e.target.textContent = '✓ Prompt copied to clipboard!';
+        setTimeout(() => { e.target.textContent = orig; }, 2000);
+      }
+    });
+
+    // Also allow Enter key on prompt cards
+    document.addEventListener('keydown', async e => {
+      if (e.key === 'Enter' && e.target.classList.contains('prompt-text')) {
+        e.target.click();
+      }
+    });
+
+    // ─────────────────────────────────────────────
+    // INTERSECTION OBSERVER — scroll reveal
+    // (Feature #2: IntersectionObserver)
+    // ─────────────────────────────────────────────
+    const revealObserver = new IntersectionObserver(
+      entries => entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          revealObserver.unobserve(e.target);
+        }
+      }),
+      { threshold: 0.08, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    function observeCards() {
+      document.querySelectorAll('.feature-card, .prompt-card').forEach(c => {
+        revealObserver.observe(c);
+      });
+    }
+
+    // ─────────────────────────────────────────────
+    // TOC ACTIVE STATE — highlight current section
+    // ─────────────────────────────────────────────
+    const tocObserver = new IntersectionObserver(
+      entries => {
+        entries.forEach(e => {
+          const id = e.target.id.replace('cat-', '');
+          const link = document.querySelector(`.toc-link[data-id="${id}"]`);
+          if (link) link.classList.toggle('active', e.isIntersecting);
+        });
+      },
+      { rootMargin: '-20% 0px -70% 0px' }
+    );
+
+    function observeSections() {
+      document.querySelectorAll('.category-section').forEach(s => {
+        tocObserver.observe(s);
+      });
+    }
+
+    // ─────────────────────────────────────────────
+    // UTILITY FUNCTIONS
+    // ─────────────────────────────────────────────
+    function escapeHtml(s) {
+      return s
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function unescapeHtml(s) {
+      const t = document.createElement('textarea');
+      t.innerHTML = s;
+      return t.value;
+    }
+
+    // ─────────────────────────────────────────────
+    // CANVAS: Bioluminescent Particle Network
+    // Photorealistic depth, glow, and connection lines.
+    // Runs on requestAnimationFrame — feature itself
+    // is demonstrated here (not just described).
+    // ─────────────────────────────────────────────
+    function initParticles() {
+      const canvas = document.getElementById('particle-canvas');
+      const ctx = canvas.getContext('2d');
+      let W, H, particles;
+      const COUNT = 80;
+      const MAX_DIST = 160;
+      let mouse = { x: -9999, y: -9999 };
+
+      // Resize canvas to match display
+      function resize() {
+        W = canvas.width  = window.innerWidth;
+        H = canvas.height = window.innerHeight;
+      }
+
+      // Particle factory
+      function makeParticle() {
+        const depth = Math.random(); // 0=back, 1=front
+        return {
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          vx: (Math.random() - 0.5) * 0.35 * (depth + 0.3),
+          vy: (Math.random() - 0.5) * 0.35 * (depth + 0.3),
+          r: 1 + depth * 2.5,         // larger = closer
+          depth,
+          hue: 160 + depth * 60,       // teal to blue-violet
+          alpha: 0.3 + depth * 0.55,
+          pulseOffset: Math.random() * Math.PI * 2
+        };
+      }
+
+      function init() {
+        resize();
+        particles = Array.from({ length: COUNT }, makeParticle);
+      }
+
+      function draw(t) {
+        ctx.clearRect(0, 0, W, H);
+
+        // Draw connection lines
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const a = particles[i], b = particles[j];
+            const dx = a.x - b.x, dy = a.y - b.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if (dist < MAX_DIST) {
+              const opacity = (1 - dist / MAX_DIST) * 0.18;
+              ctx.strokeStyle = `rgba(0,255,200,${opacity})`;
+              ctx.lineWidth = 0.8 * (a.depth + b.depth) * 0.5;
+              ctx.beginPath();
+              ctx.moveTo(a.x, a.y);
+              ctx.lineTo(b.x, b.y);
+              ctx.stroke();
+            }
+          }
+        }
+
+        // Draw particles
+        particles.forEach(p => {
+          const pulse = Math.sin(t * 0.001 + p.pulseOffset) * 0.3 + 0.7;
+          const glow = p.r * 8 * p.depth;
+
+          // Glow aura
+          const grad = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, glow);
+          grad.addColorStop(0, `hsla(${p.hue},100%,65%,${p.alpha * pulse})`);
+          grad.addColorStop(1, `hsla(${p.hue},100%,65%,0)`);
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, glow, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Core dot
+          ctx.fillStyle = `hsla(${p.hue},100%,80%,${p.alpha})`;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r * pulse, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Move
+          p.x += p.vx;
+          p.y += p.vy;
+
+          // Mouse repulsion (subtle)
+          const mx = p.x - mouse.x, my = p.y - mouse.y;
+          const md = Math.sqrt(mx*mx + my*my);
+          if (md < 120) {
+            const force = (120 - md) / 120 * 0.5;
+            p.vx += (mx / md) * force;
+            p.vy += (my / md) * force;
+          }
+
+          // Drag
+          p.vx *= 0.998;
+          p.vy *= 0.998;
+
+          // Wrap edges
+          if (p.x < -20) p.x = W + 20;
+          if (p.x > W + 20) p.x = -20;
+          if (p.y < -20) p.y = H + 20;
+          if (p.y > H + 20) p.y = -20;
+        });
+
+        requestAnimationFrame(draw);
+      }
+
+      // Track mouse for repulsion
+      window.addEventListener('mousemove', e => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+      });
+
+      // Resize handler with debounce
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resize, 150);
+      });
+
+      // Disable if reduced motion is preferred
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+      init();
+      requestAnimationFrame(draw);
+    }
+
+    // ─────────────────────────────────────────────
+    // BOOT SEQUENCE
+    // ─────────────────────────────────────────────
+    render();
+    observeCards();
+    observeSections();
+    initParticles();
+
+  })(); // End IIFE — keeps all variables out of global scope
+  </script>
+</body>
+</html>
